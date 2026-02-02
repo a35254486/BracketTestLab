@@ -113,49 +113,23 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-NavyBlack {
-            background: var(--NavyBlack);
-            color: white;
-        }
+        .btn-NavyBlack { background: var(--NavyBlack); color: white; }
+        .btn-NavyBlack:hover { background: #TealBlue; transform: translateY(-2px); }
+        .btn-secondary { background: var(--Yellow); color: var(--NavyBlack); }
+        .btn-secondary:hover { background: #TealBlue; transform: translateY(-2px); }
+        .btn-Yellow { background: white; color: var(--NavyBlack); border: 2px solid var(--NavyBlack); }
+        .btn-Yellow:hover { background: var(--NavyBlack); color: white; }
 
-        .btn-NavyBlack:hover {
-            background: #TealBlue;
-            transform: translateY(-2px);
-        }
+        .bracket-scroll { 
+            overflow: auto; 
+            padding: 1rem 0; 
+            position: relative; }
 
-        .btn-secondary {
-            background: var(--Yellow);
-            color: var(--NavyBlack);
-        }
-
-        .btn-secondary:hover {
-            background: #TealBlue;
-            transform: translateY(-2px);
-        }
-
-        .btn-Yellow {
-            background: white;
-            color: var(--NavyBlack);
-            border: 2px solid var(--NavyBlack);
-        }
-
-        .btn-Yellow:hover {
-            background: var(--NavyBlack);
-            color: white;
-        }
-
-        .bracket-scroll {
-            overflow: auto;
-            padding: 1rem 0;
-            position: relative;
-        }
-
-        .bracket-container {
-            transform-origin: top center;
-            transition: transform 0.2s ease;
-            display: inline-block;
-            min-width: auto;
-        }
+        .bracket-container { 
+            transform-origin: top center; 
+            transition: transform 0.2s ease; 
+            display: inline-block; 
+            min-width: auto; }
 
         .bracket {
             display: flex;
