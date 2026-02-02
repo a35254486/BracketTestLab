@@ -181,8 +181,10 @@
         .finals-column {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* This aligns content to the top */
             align-items: center;
+            padding-top: 10rem; /* Adjust this value to push the content down from the top */
+
         }
 
         .round {
@@ -399,7 +401,7 @@
     display: block;
     max-width: 450px; /* Adjust this size as needed */
     height: auto;
-    margin: 0.5rem auto 0 auto; /* Adjust top margin for spacing */
+    margin-bottom: 3rem; /* Creates space between the logo and the text below it */
 }
         
 </style>
