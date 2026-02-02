@@ -113,28 +113,54 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-NavyBlack { background: var(--NavyBlack); color: white; }
-        .btn-NavyBlack:hover { background: #TealBlue; transform: translateY(-2px); }
-        .btn-secondary { background: var(--Yellow); color: var(--NavyBlack); }
-        .btn-secondary:hover { background: #TealBlue; transform: translateY(-2px); }
-        .btn-Yellow { background: white; color: var(--NavyBlack); border: 2px solid var(--NavyBlack); }
-        .btn-Yellow:hover { background: var(--NavyBlack); color: white; }
+        .btn-NavyBlack {
+            background: var(--NavyBlack);
+            color: white;
+        }
 
-        .bracket-scroll { 
-            overflow: auto; 
-            padding: 1rem 0; 
-            position: relative; }
+        .btn-NavyBlack:hover {
+            background: #TealBlue;
+            transform: translateY(-2px);
+        }
 
-        .bracket-container { 
-            transform-origin: top center; 
-            transition: transform 0.2s ease; 
-            display: inline-block; 
-            min-width: auto; }
+        .btn-secondary {
+            background: var(--Yellow);
+            color: var(--NavyBlack);
+        }
+
+        .btn-secondary:hover {
+            background: #TealBlue;
+            transform: translateY(-2px);
+        }
+
+        .btn-Yellow {
+            background: white;
+            color: var(--NavyBlack);
+            border: 2px solid var(--NavyBlack);
+        }
+
+        .btn-Yellow:hover {
+            background: var(--NavyBlack);
+            color: white;
+        }
+
+        .bracket-scroll {
+            overflow: auto;
+            padding: 1rem 0;
+            position: relative;
+        }
+
+        .bracket-container {
+            transform-origin: top center;
+            transition: transform 0.2s ease;
+            display: inline-block;
+            min-width: auto;
+        }
 
         .bracket {
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* instead of 'center' - this aligns all columns to the top */
+            align-items: flex-start; /* instead of 'center' - This aligns all columns to the top */
             gap: 60px;
             min-width: max-content;
         }
@@ -342,8 +368,8 @@
         }
 
         .champion-display h2 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 2.5rem;
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 4.5rem;
             color: var(--Yellow);
             margin-bottom: 1rem;
             font-weight: 700;
@@ -351,7 +377,7 @@
         }
 
         .champion-name {
-            font-size: 2rem;
+            font-size: 3.5rem;
             font-weight: 700;
             color: white;
         }
@@ -373,40 +399,26 @@
 /* --- STYLES FOR THE CENTER LOGO --- */
 .center-logo {
     display: block;
-    max-width: 750px; /* Adjust this size as needed */
+    max-width: 750px;
     height: auto;
-    margin-bottom: 10rem; /* Creates space between the logo and the text below it */
+    margin-bottom: 10rem;
 }
 
-    /* --- STYLES FOR UNSELECTED FIRST ROUND MATCHUPS --- */
+/* --- Default style for Round 1 teams + White Separator Line --- */
 .round1 .team:not(.winner):not(.loser) {
     background-color: var(--NavyBlack);
     color: white;
-    border-color: var(--NavyBlack);
-
-    /* --- Adds a white separating line to Round 1 matchups --- */
+    border-color: var(--NavyBlack); /* Sets the outside border */
+}
 .round1 .team:first-child:not(.winner):not(.loser) {
-    border-bottom-color: White;
-.round1 .team:last-child:not(.winner):not(.loser) {
-    border-top: 1px White;
+    border-bottom-color: white; /* Creates the white line on the top team */
 }
 
-/* --- Forceful Fix for Round 1 Hover Effect --- */
+/* --- Correct Hover style for Round 1 teams --- */
 .round1 .team:not(.winner):not(.loser):hover {
-    background-color: #E8B00F !important;
-    border-color: var(--Yellow) !important;
-    color: var(--Yellow) !important;
-}
-/* --- FIX FOR ROUND 1 SEPARATOR LINE --- */
-.round1 .team:last-child:not(.winner):not(.loser) {
-    border-top: 2px solid white;
-}
-
-/* --- FIX FOR ROUND 1 HOVER EFFECT --- */
-.round1 .team:not(.winner):not(.loser):hover {
-    background-color: #FFFEF5 !important;
-    border-color: var(--Yellow) !important;
-    color: var(--NavyBlack) !important;
+    background-color: #FFFEF5;
+    border-color: var(--Yellow);
+    color: var(--NavyBlack); /* Makes text visible on hover */
 }
         
 </style>
