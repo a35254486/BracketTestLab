@@ -571,7 +571,6 @@
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
             const finalsRound = createRound(rounds[5], 5, 0, 1);
-            finalsDiv.appendChild(finalsRound);
 
     // === THIS IS THE NEW BLOCK TO ADD YOUR IMAGE ===
     // ===================================================
@@ -581,6 +580,7 @@
             logo.className = 'center-logo';
             finalsDiv.appendChild(logo); // Adds the image to the center column
     // ===================================================
+            finalsDiv.appendChild(finalsRound);
             
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
