@@ -417,7 +417,12 @@
     border-top: 1px White;
 }
 
-}        
+    /* --- Fix for Round 1 Hover Effect --- */
+.round1 .team:not(.winner):not(.loser):hover {
+    background-color: #E8B00F; /* Your original light yellow hover background */
+    border-color: var(--Yellow);   /* Your original yellow hover border */
+}
+        
 </style>
 </head>
 <body>
