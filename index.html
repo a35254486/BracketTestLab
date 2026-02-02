@@ -56,7 +56,7 @@
             margin-bottom: 1rem;
             background-color: var(--NavyBlack); /* Adds the dark blue background */
             border: 4px solid var(--Yellow);  /* Adds the yellow outline */
-            padding: 2rem;                    /* Adds spacing inside the box */
+            padding: 1rem;                    /* Adds spacing inside the box */
             border-radius: 10px;              /* Rounds the corners to match the container */
         }
         h1 {
@@ -412,7 +412,9 @@
 
     /* --- Adds a white separating line to Round 1 matchups --- */
 .round1 .team:first-child:not(.winner):not(.loser) {
-    border-bottom-color: white;
+    border-bottom-color: White;
+.round1 .team:last-child:not(.winner):not(.loser) {
+    border-top: 1px White;
 }
 
 }        
