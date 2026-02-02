@@ -394,6 +394,14 @@
         .team .seed {
             display: none;
         }
+/* --- STYLES FOR THE CENTER LOGO --- */
+.center-logo {
+    display: block;
+    max-width: 150px; /* Adjust this size as needed */
+    height: auto;
+    margin: 1.5rem auto 0 auto; /* Adjust top margin for spacing */
+}
+        
 </style>
 </head>
 <body>
@@ -403,7 +411,7 @@
             <p class="subtitle">Who rules the Rules?</p>
         </header>
 
-        <div class="controls">
+    <div class="controls">
             <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button>
             <!--HIDDEN EXPORT BUTTON-->
             <!--<button class="btn-Yellow" onclick="exportBracket()">Export Data</button>-->
@@ -414,13 +422,13 @@
             </div>
         </div>
 
-        <div class="bracket-scroll" id="bracketScroll">
+    <div class="bracket-scroll" id="bracketScroll">
             <div class="bracket-container" id="bracketContainer">
                 <div class="bracket" id="bracket"></div>
             </div>
         </div>
 
-        <div class="champion-display" id="championDisplay">
+    <div class="champion-display" id="championDisplay">
             <h2>🏆 N72 RULES OF THE ROAD CHAMPION 🏆</h2>
             <div class="champion-name" id="championName"></div>
         </div>
@@ -565,6 +573,15 @@
             const finalsRound = createRound(rounds[5], 5, 0, 1);
             finalsDiv.appendChild(finalsRound);
 
+    // === THIS IS THE NEW BLOCK TO ADD YOUR IMAGE ===
+    // ===================================================
+            const logo = document.createElement('img');
+            logo.src = 'SWSC_logo.png'; // <-- IMPORTANT: REPLACE WITH YOUR FILENAME
+            logo.alt = 'Bracket Logo';
+            logo.className = 'center-logo';
+            finalsDiv.appendChild(logo); // Adds the image to the center column
+    // ===================================================
+            
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
             bracket.appendChild(rightHalf);
