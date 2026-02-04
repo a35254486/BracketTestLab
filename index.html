@@ -342,15 +342,6 @@
             color: white;
             text-transform: uppercase;
         }
-        /* --- Styles for Initial Bracket Fade-in --- */
-        .bracket-container {
-            opacity: 0; /* Start the bracket container as invisible */
-            transition: opacity 0.4s ease-in-out; /* Define the fade animation */
-        }
-        .bracket-container.loaded {
-            opacity: 1; /* A class that, when added, will make the container visible */
-        }
-
     </style>
 </head>
 <body>
@@ -632,9 +623,7 @@
 		            zoomLevel = (viewW - 25) / contentW;
 		        }
 		        updateZoom();
-                // THIS IS THE NEW LINE TO TRIGGER THE FADE-IN
-                container.classList.add('loaded');
-		    }, 222); 
+		    }, 300); 
 });
 
 // --- Allows user to click overlay to close it ---
