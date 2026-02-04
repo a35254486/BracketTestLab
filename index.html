@@ -507,12 +507,29 @@
                 matchDiv.className = 'match';
                 matchDiv.dataset.matchId = matchId;
                 if (roundIndex === 0) {
+				    const p1Index = matchIndex * 2, p2Index = matchIndex * 2 + 1;
+				    const seedPattern = [1, 16, 8, 9, 5, 12, 4, 13, 6, 11, 3, 14, 7, 10, 2, 15];
+				    const seed1 = seedPattern[(matchIndex % 8) * 2], seed2 = seedPattern[(matchIndex % 8) * 2 + 1];
+				    bracketData[matchId] = { teams: [{ name: players[p1Index], seed: seed1 }, { name: players[p2Index], seed: seed2 }], winner: null };
+				        // NEW, CORRECTED HTML STRUCTURE
+				    matchDiv.innerHTML = `
+				        <div class="match-line">
+				            <div class="seed">${seed1}</div>
+				            <div class="team" data-match="${matchId}" data-team="0">${players[p1Index]}</div>
+				        </div>
+				        <div class="match-line">
+				            <div class="seed">${seed2}</div>
+				            <div class="team" data-match="${matchId}" data-team="1">${players[p2Index]}</div>
+				        </div>
+`;
+}
+				/*if (roundIndex === 0) {
                     const p1Index = matchIndex * 2, p2Index = matchIndex * 2 + 1;
                     const seedPattern = [1, 16, 8, 9, 5, 12, 4, 13, 6, 11, 3, 14, 7, 10, 2, 15];
                     const seed1 = seedPattern[(matchIndex % 8) * 2], seed2 = seedPattern[(matchIndex % 8) * 2 + 1];
                     bracketData[matchId] = { teams: [{ name: players[p1Index], seed: seed1 }, { name: players[p2Index], seed: seed2 }], winner: null };
                     matchDiv.innerHTML = `<div class="match-line"><div class="team" data-match="${matchId}" data-team="0"><span class="seed">${seed1}</span>${players[p1Index]}</div><div class="team" data-match="${matchId}" data-team="1"><span class="seed">${seed2}</span>${players[p2Index]}</div></div>`;
-                } else {
+                }*/ else {
                     bracketData[matchId] = { teams: [{ name: 'TBD', seed: null }, { name: 'TBD', seed: null }], winner: null };
                     matchDiv.innerHTML = `<div class="match-line"><div class="team" data-match="${matchId}" data-team="0"><span class="seed">-</span>TBD</div><div class="team" data-match="${matchId}" data-team="1"><span class="seed">-</span>TBD</div></div>`;
                 }
