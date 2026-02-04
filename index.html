@@ -342,15 +342,6 @@
             color: white;
             text-transform: uppercase;
         }
-		/* --- Styles for Initial Bracket Fade-in --- */
-		.bracket-container {
-		    opacity: 0; /* Start the bracket container as invisible */
-		    transition: opacity 0.4s ease-in-out; /* Define the fade animation */
-		}
-		.bracket-container.loaded {
-		    opacity: 1; /* A class that, when added, will make the container visible */
-		}
-
     </style>
 </head>
 <body>
@@ -451,6 +442,7 @@
 			"LT Benjamin Deforest",   //10
 			"Kat Hunter",   //2
 			"BYE"             //15
+
         ];
         const rounds = [
             { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
