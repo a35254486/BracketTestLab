@@ -179,13 +179,13 @@
         .team {
             background: white;
             border: 2px solid var(--border);
-            padding: 10px 15px;
+            padding: 5px 5px;
             min-width: 200px;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
             font-weight: 700;
-            font-size: 1.3rem;
+            font-size: 0.9rem;
         }
         .team:first-child {
             border-bottom: 1px solid var(--border);
@@ -218,7 +218,18 @@
             font-weight: 700;
         }
         .seed {
-            display: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--Yellow);
+            color: var(--NavyBlack);
+            font-size: 0.9rem;
+            font-weight: 700;
+            width: 27px;
+            flex-shrink: 0;
+            border: 2px solid var(--border);
+            border-right: none;
+            border-radius: 3px 0 0 3px;
         }
         .winner .seed {
             background: var(--Yellow);
@@ -276,7 +287,7 @@
             display: block;
             max-width: 750px;
             height: auto;
-            margin-bottom: 12rem;
+            margin-bottom: 6rem;
         }
         .round1 .team:not(.winner):not(.loser) {
             background-color: var(--NavyBlack);
@@ -369,15 +380,74 @@
     </div>
     <script>
         let players = [
-			"LT Patrick Vivian", "BYE", "LT Jonathan Sodano", "LT Branden Ward", "LT Kevin Sweetman", "William Lyons", "LT Geoff Welch", "BYE",
-			"LT David Harland", "LT Robert Beurket", "LT Wyatt Moore", "BYE", "LT Blake Fontaine", "LT Ben Severson", "David Kane", "BYE",
-			"LT Meredith Engel", "BYE", "Walt O'Donnell", "Tanner Blythe", "Katie Moore", "Jerry Tredo", "LCDR Gregory Christod", "BYE",
-			"LCDR Alexander Kavall", "QMC Montraye Whaley", "LT John O'Connell", "BYE", "LT Branner Astrop", "LT Gregory Holmes", "Ted Olson", "BYE",
-			"LT Kevin Brunner", "BYE", "QMC Jonathon Zitt", "LCDR Jocelyn Addeo", "David Parkhurst", "CAPT Tim Steadman", "Davis Chandler", "BYE",
-			"LT Kellen Gray", "QMC Robert Papili", "LT Alex Egbers", "BYE", "CAPT Leo Mcdonough", "QMCS Daniel Urbano", "LT Seth Bradley", "BYE",
-			"CAPT Michael Shanley", "BYE", "LT Tony Kennedy", "LT Ian Johnson", "CAPT Philip Lapointe", "CDR Michael Chesnut", "LT Gabriel Ptasienski", "BYE",
-			"LT Alexander Mcquain", "LT Jacob Vehrs", "David Carrillo", "BYE", "LT Steven Tommasello", "LT Benjamin Deforest", "Kat Hunter", "BYE"
-        ];
+			// Region 1
+			"LT Patrick Vivian",   //1
+			"BYE",            //16
+			"LT Jonathan Sodano",   //8
+			"LT Branden Ward",   //9
+			"LT Kevin Sweetman",   //5
+			"William Lyons",   //12
+			"LT Geoff Welch",   //4
+			"BYE",            //13
+			"LT David Harland",   //6
+			"LT Robert Beurket",   //11
+			"LT Wyatt Moore",   //3
+			"BYE",            //14
+			"LT Blake Fontaine",   //7
+			"LT Ben Severson",   //10
+			"David Kane",   //2
+			"BYE",            //15
+			// Region 2
+			"LT Meredith Engel",   //1
+			"BYE",            //16
+			"Walt O'Donnell",   //8
+			"Tanner Blythe",   //9
+			"Katie Moore",   //5
+			"Jerry Tredo",   //12
+			"LCDR Gregory Christod",   //4
+			"BYE",            //13
+			"LCDR Alexander Kavall",   //6
+			"QMC Montraye Whaley",   //11
+			"LT John O'Connell",   //3
+			"BYE",            //14
+			"LT Branner Astrop",   //7
+			"LT Gregory Holmes",   //10
+			"Ted Olson",   //2
+			"BYE",            //15
+			// Region 3
+			"LT Kevin Brunner",   //1
+			"BYE",            //16
+			"QMC Jonathon Zitt",   //8
+			"LCDR Jocelyn Addeo",   //9
+			"David Parkhurst",   //5
+			"CAPT Tim Steadman",   //12
+			"Davis Chandler",   //4
+			"BYE",            //13
+			"LT Kellen Gray",   //6
+			"QMC Robert Papili",   //11
+			"LT Alex Egbers",   //3
+			"BYE",            //14
+			"CAPT Leo Mcdonough",   //7
+			"QMCS Daniel Urbano",   //10
+			"LT Seth Bradley",   //2
+			"BYE",            //15
+			// Region 4
+			"CAPT Michael Shanley",   //1
+			"BYE",            //16
+			"LT Tony Kennedy",   //8
+			"LT Ian Johnson",   //9
+			"CAPT Philip Lapointe",   //5
+			"CDR Michael Chesnut",   //12
+			"LT Gabriel Ptasienski",   //4
+			"BYE",            //13
+			"LT Alexander Mcquain",   //6
+			"LT Jacob Vehrs",   //11
+			"David Carrillo",   //3
+			"BYE",            //14
+			"LT Steven Tommasello",   //7
+			"LT Benjamin Deforest",   //10
+			"Kat Hunter",   //2
+			"BYE"             //15
         const rounds = [
             { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
             { name: 'ELITE 8', matches: 4, class: 'round4' }, { name: 'FINAL 4', matches: 2, class: 'round5' }, { name: 'CHAMPIONSHIP', matches: 1, class: 'round6' }
