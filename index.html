@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rules of the Road March Madness</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&familyensed:wght@400;700&display=swap
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100y=swap
+    https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap
+    https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap
     <style>
         :root {
             --NavyBlack: #08262C;
@@ -39,29 +39,30 @@
             background-color: var(--NavyBlack);
             border: 4px solid var(--Yellow); 
             padding: 0.5rem;                 
-            border-radius: 10px;              
+            border-radius: 10px;
+            overflow: hidden; /* clips any rare overflow */
         }
         h1 {
             font-family: "Josefin Sans", sans-serif;
-            font-size: 5.25rem;
+            /* Responsive font size: shrinks on narrow viewports, grows back up to original */
+            font-size: clamp(1.25rem, 7.8vw, 5.25rem);
             color: var(--White);
             letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            /* Keep single line; let JS adjust font-size */
-            white-space: nowrap;
-            line-height: 1.1;
+            white-space: nowrap;  /* keep on one line */
+            line-height: 1.1;     /* stable line-height for measurement */
         }
         .subtitle {
             font-family: "Josefin Sans", sans-serif;
-            font-size: 2.75rem;
+            /* Responsive font size: shrinks/grows with viewport */
+            font-size: clamp(1rem, 3.8vw, 2.75rem);
             color: var(--White);
             text-transform: uppercase;
             font-weight: 600;
             font-style: italic;
-            /* Keep single line; let JS adjust font-size */
-            white-space: nowrap;
+            white-space: nowrap;  /* keep on one line */
             line-height: 1.1;
             margin: 0;
         }
@@ -361,8 +362,8 @@
 <body>
     <div class="container">
         <header>
-            <h1 id="pageTitle">Rules of the Road March Madness</h1>
-            <p class="subtitle" id="pageSubtitle">Who rules the Rules?</p>
+            <h1>Rules of the Road March Madness</h1>
+            <p class="subtitle">Who rules the Rules?</p>
         </header>
         <div class="controls">
             <!-- <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button> -->
@@ -415,206 +416,3 @@
             finalsDiv.className = 'finals-column';
             const finalsRound = createRound(rounds[5], 5, 0, 1);
             const logo = document.createElement('img');
-            logo.src = 'SWSC_logo.png';
-            logo.alt = 'Bracket Logo';
-            logo.className = 'center-logo';
-            finalsDiv.appendChild(logo);
-            finalsDiv.appendChild(finalsRound);
-            bracket.appendChild(leftHalf);
-            bracket.appendChild(finalsDiv);
-            bracket.appendChild(rightHalf);
-            attachClickHandlers();
-            attachHoverHandlers();
-        }
-        function createRound(round, roundIndex, startMatch, matchCount) {
-            const roundDiv = document.createElement('div');
-            roundDiv.className = `round ${round.class}`;
-            const header = document.createElement('div');
-            header.className = 'round-header';
-            header.textContent = round.name;
-            roundDiv.appendChild(header);
-            const matchesDiv = document.createElement('div');
-            matchesDiv.className = 'round-matches';
-            for (let i = 0; i < matchCount; i++) {
-                const matchIndex = startMatch + i;
-                const matchId = `r${roundIndex}-m${matchIndex}`;
-                const matchDiv = document.createElement('div');
-                matchDiv.className = 'match';
-                matchDiv.dataset.matchId = matchId;
-                if (roundIndex === 0) {
-                    const p1Index = matchIndex * 2, p2Index = matchIndex * 2 + 1;
-                    const seedPattern = [1, 16, 8, 9, 5, 12, 4, 13, 6, 11, 3, 14, 7, 10, 2, 15];
-                    const seed1 = seedPattern[(matchIndex % 8) * 2], seed2 = seedPattern[(matchIndex % 8) * 2 + 1];
-                    bracketData[matchId] = { teams: [{ name: players[p1Index], seed: seed1 }, { name: players[p2Index], seed: seed2 }], winner: null };
-                    matchDiv.innerHTML = `
-                        <div class="match-line">
-                            <div class="seed">${seed1}</div>
-                            <div class="team" data-match="${matchId}" data-team="0">${players[p1Index]}</div>
-                        </div>
-                        <div class="match-line">
-                            <div class="seed">${seed2}</div>
-                            <div class="team" data-match="${matchId}" data-team="1">${players[p2Index]}</div>
-                        </div>
-                    `;
-                } else {
-                    bracketData[matchId] = { teams: [{ name: 'TBD', seed: null }, { name: 'TBD', seed: null }], winner: null };
-                    matchDiv.innerHTML = `
-                        <div class="match-line">
-                            <div class="seed">-</div>
-                            <div class="team" data-match="${matchId}" data-team="0">TBD</div>
-                        </div>
-                        <div class="match-line">
-                            <div class="seed">-</div>
-                            <div class="team" data-match="${matchId}" data-team="1">TBD</div>
-                        </div>
-                    `;
-                }
-                matchesDiv.appendChild(matchDiv);
-            }
-            roundDiv.appendChild(matchesDiv);
-            return roundDiv;
-        }
-        function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
-        function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { highlightPlayer(this.textContent); }); team.addEventListener('mouseleave', clearHighlights); }); }
-        function selectWinner(matchId, teamIndex) {
-            const match = bracketData[matchId];
-            const selectedTeam = match.teams[teamIndex];
-            if (selectedTeam.name === 'TBD' || selectedTeam.name === 'BYE') return;
-            const isAlreadyDecided = match.winner !== null;
-            const isWinnerClicked = isAlreadyDecided && match.winner === teamIndex;
-            if (isAlreadyDecided) {
-                clearFutureMatches(matchId);
-            }
-            if (isWinnerClicked) {
-                match.winner = null;
-                const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
-                matchDiv.querySelectorAll('.team').forEach(t => t.classList.remove('winner', 'loser'));
-            } else {
-                match.winner = teamIndex;
-                const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
-                matchDiv.querySelectorAll('.match-line').forEach((line) => {
-                    const team = line.querySelector('.team');
-                    if (parseInt(team.dataset.team) === teamIndex) {
-                        team.classList.add('winner');
-                        team.classList.remove('loser');
-                    } else {
-                        team.classList.add('loser');
-                        team.classList.remove('winner');
-                    }
-                });
-                advanceWinner(matchId, selectedTeam);
-            }
-        }
-        function advanceWinner(matchId, winningTeam) {
-            const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-            if (roundNum >= rounds.length - 1) {
-                showChampion(winningTeam.name);
-                return;
-            }
-            const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
-            const position = matchNum % 2;
-            bracketData[nextMatchId].teams[position] = { name: winningTeam.name, seed: winningTeam.seed };
-            const nextMatchLine = document.querySelector(`[data-match-id="${nextMatchId}"]`).querySelectorAll('.match-line')[position];
-            nextMatchLine.querySelector('.team').textContent = winningTeam.name;
-            nextMatchLine.querySelector('.seed').textContent = winningTeam.seed || '-';
-        }
-        function clearFutureMatches(matchId) {
-            const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-            if (roundNum >= rounds.length - 1) {
-                showChampion(null);
-                return;
-            }
-            const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
-            const position = matchNum % 2;
-            if (!bracketData[nextMatchId]) return;
-            if (bracketData[nextMatchId].winner !== null) {
-                clearFutureMatches(nextMatchId);
-            }
-            bracketData[nextMatchId].teams[position] = { name: 'TBD', seed: null };
-            bracketData[nextMatchId].winner = null;
-            const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
-            if (nextMatchDiv) {
-                const teamLineToClear = nextMatchDiv.querySelectorAll('.match-line')[position];
-                teamLineToClear.querySelector('.team').textContent = 'TBD';
-                teamLineToClear.querySelector('.seed').textContent = '-';
-                nextMatchDiv.querySelectorAll('.team').forEach(team => {
-                    team.classList.remove('winner', 'loser');
-                });
-            }
-        }
-        function showChampion(name) {
-            const overlay = document.getElementById('championOverlay');
-            if (name) {
-                document.getElementById('championName').textContent = name;
-                overlay.classList.add('show');
-            } else {
-                overlay.classList.remove('show');
-            }
-        }
-        function highlightPlayer(name) { if (name === 'TBD' || name === 'BYE') return; document.querySelectorAll('.team').forEach(team => { if (team.textContent === name) { team.classList.add('highlighted'); } }); }
-        function clearHighlights() { document.querySelectorAll('.team').forEach(team => team.classList.remove('highlighted')); }
-        function resetBracket() {
-            document.getElementById('championOverlay').classList.remove('show');
-            document.getElementById('championName').textContent = '';
-            initializeBracket();
-        }
-        
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                initializeBracket();
-                const scrollEl = document.getElementById('bracketScroll');
-                const container = document.getElementById('bracketContainer');
-                const contentW = container.scrollWidth;
-                const viewW = scrollEl.clientWidth;
-                if (contentW > viewW) {
-                    zoomLevel = (viewW - 25) / contentW;
-                }
-                updateZoom();
-            }, 300); 
-        });
-
-        document.getElementById('championOverlay').addEventListener('click', () => {
-            document.getElementById('championOverlay').classList.remove('show');
-        });
-
-        /* ===== Minimal fit-to-width for title + subtitle (binary search) =====
-           - Only adjusts font-size of #pageTitle and #pageSubtitle.
-           - No clones, no layout changes outside the header.
-           - Guarantees single line by shrinking until it fits the header width.
-        */
-        (function() {
-          function fit(el, minPx, maxPx) {
-            if (!el || !el.parentElement) return;
-            const container = el.parentElement; // header
-            // Binary search for the largest font-size that fits
-            let low = minPx, high = maxPx, best = minPx;
-            // Start big so we can shrink down
-            el.style.whiteSpace = 'nowrap';
-            el.style.fontSize = maxPx + 'px';
-            for (let i = 0; i < 12; i++) { // ~12 iterations is plenty
-              const mid = Math.floor((low + high) / 2);
-              el.style.fontSize = mid + 'px';
-              // Measure at this size
-              const fits = el.scrollWidth <= container.clientWidth;
-              if (fits) {
-                best = mid;
-                low = mid + 1; // try bigger
-              } else {
-                high = mid - 1; // go smaller
-              }
-            }
-            el.style.fontSize = best + 'px';
-          }
-          function runFit() {
-            fit(document.getElementById('pageTitle'),    12, 96);
-            fit(document.getElementById('pageSubtitle'), 10, 48);
-          }
-          window.addEventListener('load', runFit);
-          window.addEventListener('resize', runFit);
-          if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(runFit).catch(() => {});
-          }
-        })();
-    </script>
-</body>
-</html>
