@@ -579,6 +579,93 @@
         document.getElementById('championOverlay').addEventListener('click', () => {
             document.getElementById('championOverlay').classList.remove('show');
         });
+		
+/* Shrink-only fitter: keeps base sizes unless text would overflow header */
+(function() {
+  const BREATHING_ROOM_PX = 4; // small margin so text never kisses the border
+
+  // Measure text width off-screen at a given font size with current font properties
+  function measureTextWidth(el, sizePx) {
+    const cs = getComputedStyle(el);
+    const span = document.createElement('span');
+    span.textContent = el.textContent;
+    Object.assign(span.style, {
+      position: 'absolute',
+      left: '-9999px',
+      top: '-9999px',
+      whiteSpace: 'nowrap',
+      fontFamily: cs.fontFamily,
+      fontWeight: cs.fontWeight,
+      fontStyle: cs.fontStyle,
+      letterSpacing: cs.letterSpacing,
+      textTransform: cs.textTransform,
+      fontSize: sizePx + 'px',
+      lineHeight: '1.1'
+    });
+    document.body.appendChild(span);
+    const width = Math.ceil(span.getBoundingClientRect().width);
+    document.body.removeChild(span);
+    return width;
+  }
+
+  function shrinkToFit(el, minPx) {
+    if (!el) return;
+    const header = el.closest('header');
+    if (!header) return;
+
+    // Read base size from CSS so full-screen uses your original look
+    const basePx = parseFloat(getComputedStyle(el).fontSize);
+    if (!basePx) return;
+
+    // Reset to base for a clean measurement (allows growth back when window widens)
+    el.style.fontSize = basePx + 'px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.lineHeight = '1.1';
+    el.style.margin = '0';
+
+    const available = header.clientWidth - BREATHING_ROOM_PX;
+    if (available <= 0) return;
+
+    // Measure natural width at the base size using off-screen text
+    const naturalWidth = measureTextWidth(el, basePx);
+    if (!naturalWidth) return;
+
+    // If it fits at base, do nothing (keep base size)
+    if (naturalWidth <= available) return;
+
+    // Otherwise shrink directly to a size that fits (clamped to minPx)
+    let newSize = Math.floor(basePx * (available / naturalWidth));
+    newSize = Math.max(minPx, newSize);
+    el.style.fontSize = newSize + 'px';
+
+    // Final verification: shave 1–2px if fractional overflow remains
+    const rendered = Math.ceil(el.getBoundingClientRect().width);
+    if (rendered > available) {
+      const shave = Math.min(2, rendered - available);
+      el.style.fontSize = Math.max(minPx, newSize - shave) + 'px';
+    }
+  }
+
+  function runFit() {
+    shrinkToFit(document.getElementById('pageTitle'),    12);
+    shrinkToFit(document.getElementById('pageSubtitle'), 10);
+  }
+
+  const schedule = () => requestAnimationFrame(runFit);
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule,   { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(schedule).catch(() => {});
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    const headerEl = document.querySelector('header');
+    if (headerEl) {
+      const ro = new ResizeObserver(schedule);
+      ro.observe(headerEl);
+    }
+  }
+})();
     </script>
 </body>
 </html>
