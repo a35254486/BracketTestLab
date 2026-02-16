@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rules of the Road March Madness</title>
-    https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap
-    https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <style>
         :root {
             --NavyBlack: #08262C;
@@ -579,5 +579,105 @@
         document.getElementById('championOverlay').addEventListener('click', () => {
             document.getElementById('championOverlay').classList.remove('show');
         });
+        
+/* Header fitter (grow + shrink, no overflow, no bracket interference) */
+(function() {
+  const BREATHING_ROOM_PX = 4; // small margin so text never touches the border
+
+  // Cache base sizes once (the original CSS sizes)
+  let BASE_TITLE_PX = null;
+  let BASE_SUB_PX   = null;
+
+  // Accurate off-screen measurement at a given size using current font props
+  function measureWidth(el, sizePx) {
+    const cs = getComputedStyle(el);
+    const span = document.createElement('span');
+    span.textContent = el.textContent;
+    Object.assign(span.style, {
+      position: 'absolute',
+      left: '-9999px',
+      top: '-9999px',
+      whiteSpace: 'nowrap',
+      fontFamily: cs.fontFamily,
+      fontWeight: cs.fontWeight,
+      fontStyle: cs.fontStyle,
+      letterSpacing: cs.letterSpacing,
+      textTransform: cs.textTransform,
+      fontSize: sizePx + 'px',
+      lineHeight: '1.1'
+    });
+    document.body.appendChild(span);
+    const width = Math.ceil(span.getBoundingClientRect().width);
+    document.body.removeChild(span);
+    return width;
+  }
+
+  function fitElement(el, basePx, minPx) {
+    if (!el) return;
+    const header = el.closest('header');
+    if (!header) return;
+
+    const available = header.clientWidth - BREATHING_ROOM_PX;
+    if (available <= 0) return;
+
+    // Measure natural width at the original base size
+    const natural = measureWidth(el, basePx);
+    if (!natural) return;
+
+    // If base fits, restore base (this makes it grow back when the window widens)
+    if (natural <= available) {
+      el.style.fontSize = basePx + 'px';
+      el.style.whiteSpace = 'nowrap';
+      el.style.lineHeight = '1.1';
+      el.style.margin = '0';
+      return;
+    }
+
+    // Otherwise shrink directly to the needed size (not below min)
+    let newSize = Math.floor(basePx * (available / natural));
+    newSize = Math.max(minPx, newSize);
+
+    el.style.fontSize = newSize + 'px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.lineHeight = '1.1';
+    el.style.margin = '0';
+
+    // Final verification: shave 1–2px if fractional overflow remains
+    const rendered = Math.ceil(el.getBoundingClientRect().width);
+    if (rendered > available) {
+      const shave = Math.min(2, rendered - available);
+      el.style.fontSize = Math.max(minPx, newSize - shave) + 'px';
+    }
+  }
+
+  function runFit() {
+    const title = document.getElementById('pageTitle');
+    const sub   = document.getElementById('pageSubtitle');
+    if (!title || !sub) return;
+
+    // Initialize base sizes once (from CSS: 5.25rem ≈ 84px, 2.75rem ≈ 44px)
+    if (BASE_TITLE_PX == null) BASE_TITLE_PX = parseFloat(getComputedStyle(title).fontSize) || 84;
+    if (BASE_SUB_PX   == null) BASE_SUB_PX   = parseFloat(getComputedStyle(sub).fontSize)   || 44;
+
+    fitElement(title, BASE_TITLE_PX, 12);
+    fitElement(sub,   BASE_SUB_PX,   10);
+  }
+
+  const schedule = () => requestAnimationFrame(runFit);
+
+  // Run at the right moments
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule,   { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(schedule).catch(() => {});
+  }
+  // Also observe header size changes (if layout tweaks alter width)
+  const headerEl = document.querySelector('header');
+  if (headerEl && 'ResizeObserver' in window) {
+    new ResizeObserver(schedule).observe(headerEl);
+  }
+})();
+
     </script>
 </body>
