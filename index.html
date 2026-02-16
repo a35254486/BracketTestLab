@@ -54,7 +54,7 @@
             font-family: "Josefin Sans", sans-serif;
             font-size: 5.25rem;
             color: var(--White);
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
             font-weight: 700;
             margin-bottom: 0.5rem;
@@ -73,6 +73,7 @@
             white-space: nowrap;
             line-height: 1.1;
             margin: 0;
+            letter-spacing: 0.5px
         }
         .controls {
             display: flex;
@@ -593,7 +594,7 @@
    - Does not touch any layout outside the header.
 */
 (function() {
-  const SAFE_RATIO = 0.98; // shrink target slightly so text never kisses the border
+  const SAFE_RATIO = 0.97; // shrink target slightly so text never kisses the border
 
   function fit(el, minPx, maxPx) {
     if (!el || !el.parentElement) return;
@@ -690,7 +691,7 @@
             font-family: "Josefin Sans", sans-serif;
             font-size: 5.25rem;
             color: var(--White);
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
             font-weight: 700;
             margin-bottom: 0.5rem;
