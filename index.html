@@ -1,12 +1,11 @@
-2.16 CODE PRESERVE (seeds display)
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rules of the Road March Madness</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&familyensed:wght@400;700&display=swap
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100y=swap
     <style>
         :root {
             --NavyBlack: #08262C;
@@ -40,30 +39,31 @@
             background-color: var(--NavyBlack);
             border: 4px solid var(--Yellow); 
             padding: 0.5rem;                 
-            border-radius: 10px;   
-			overflow: hidden
+            border-radius: 10px;              
         }
         h1 {
             font-family: "Josefin Sans", sans-serif;
-            font-size: clamp(1.25rem, 7.8vw, 5.25rem); /* NEW: scales down & up with window width */                       
+            font-size: 5.25rem;
             color: var(--White);
             letter-spacing: 2px;
             text-transform: uppercase;
             font-weight: 700;
             margin-bottom: 0.5rem;
-		    white-space: nowrap;  /* NEW: force single line */
-		    line-height: 1.1;     /* NEW: tighter, stable measurement */
+            /* Keep single line; let JS adjust font-size */
+            white-space: nowrap;
+            line-height: 1.1;
         }
         .subtitle {
             font-family: "Josefin Sans", sans-serif;
-            font-size: clamp(1rem, 3.8vw, 2.75rem); /* NEW: scales down & up with window width */
+            font-size: 2.75rem;
             color: var(--White);
             text-transform: uppercase;
             font-weight: 600;
-   		    font-style: italic;
-		    white-space: nowrap;  /* NEW: force single line */
-		    line-height: 1.1;     /* NEW: tighter, stable measurement */
-  			margin: 0;            /* NEW: avoids extra measurement noise */
+            font-style: italic;
+            /* Keep single line; let JS adjust font-size */
+            white-space: nowrap;
+            line-height: 1.1;
+            margin: 0;
         }
         .controls {
             display: flex;
@@ -360,9 +360,9 @@
 </head>
 <body>
     <div class="container">
-        <header>        
-		    <h1 id="pageTitle">Rules of the Road March Madness</h1>
-		    <p class="subtitle" id="pageSubtitle">Who rules the Rules?</p>
+        <header>
+            <h1 id="pageTitle">Rules of the Road March Madness</h1>
+            <p class="subtitle" id="pageSubtitle">Who rules the Rules?</p>
         </header>
         <div class="controls">
             <!-- <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button> -->
@@ -382,10 +382,10 @@
     </div>
     <script>
         let players = [
-			"LT Patrick Vivian", "BYE", "LT Jonathan Sodano", "LT Branden Ward", "LT Kevin Sweetman", "William Lyons", "LT Geoff Welch", "BYE", "LT David Harland", "LT Robert Beurket", "LT Wyatt Moore", "BYE", "LT Blake Fontaine", "LT Ben Severson", "David Kane", "BYE",
-			"LT Meredith Engel", "BYE", "Walt O'Donnell", "Tanner Blythe", "Katie Moore", "Jerry Tredo", "LCDR Gregory Christod", "BYE", "LCDR Alexander Kavall", "QMC Montraye Whaley", "LT John O'Connell", "BYE", "LT Branner Astrop", "LT Gregory Holmes", "Ted Olson", "BYE",
-			"LT Kevin Brunner", "BYE", "QMC Jonathon Zitt", "LCDR Jocelyn Addeo", "David Parkhurst", "CAPT Tim Steadman", "Davis Chandler", "BYE", "LT Kellen Gray", "QMC Robert Papili", "LT Alex Egbers", "BYE", "CAPT Leo Mcdonough", "QMCS Daniel Urbano", "LT Seth Bradley", "BYE",
-			"CAPT Michael Shanley", "BYE", "LT Tony Kennedy", "LT Ian Johnson", "CAPT Philip Lapointe", "CDR Michael Chesnut", "LT Gabriel Ptasienski", "BYE", "LT Alexander Mcquain", "LT Jacob Vehrs", "David Carrillo", "BYE", "LT Steven Tommasello", "LT Benjamin Deforest", "Kat Hunter", "BYE"
+            "LT Patrick Vivian", "BYE", "LT Jonathan Sodano", "LT Branden Ward", "LT Kevin Sweetman", "William Lyons", "LT Geoff Welch", "BYE", "LT David Harland", "LT Robert Beurket", "LT Wyatt Moore", "BYE", "LT Blake Fontaine", "LT Ben Severson", "David Kane", "BYE",
+            "LT Meredith Engel", "BYE", "Walt O'Donnell", "Tanner Blythe", "Katie Moore", "Jerry Tredo", "LCDR Gregory Christod", "BYE", "LCDR Alexander Kavall", "QMC Montraye Whaley", "LT John O'Connell", "BYE", "LT Branner Astrop", "LT Gregory Holmes", "Ted Olson", "BYE",
+            "LT Kevin Brunner", "BYE", "QMC Jonathon Zitt", "LCDR Jocelyn Addeo", "David Parkhurst", "CAPT Tim Steadman", "Davis Chandler", "BYE", "LT Kellen Gray", "QMC Robert Papili", "LT Alex Egbers", "BYE", "CAPT Leo Mcdonough", "QMCS Daniel Urbano", "LT Seth Bradley", "BYE",
+            "CAPT Michael Shanley", "BYE", "LT Tony Kennedy", "LT Ian Johnson", "CAPT Philip Lapointe", "CDR Michael Chesnut", "LT Gabriel Ptasienski", "BYE", "LT Alexander Mcquain", "LT Jacob Vehrs", "David Carrillo", "BYE", "LT Steven Tommasello", "LT Benjamin Deforest", "Kat Hunter", "BYE"
         ];
         const rounds = [
             { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
@@ -446,7 +446,6 @@
                     const seedPattern = [1, 16, 8, 9, 5, 12, 4, 13, 6, 11, 3, 14, 7, 10, 2, 15];
                     const seed1 = seedPattern[(matchIndex % 8) * 2], seed2 = seedPattern[(matchIndex % 8) * 2 + 1];
                     bracketData[matchId] = { teams: [{ name: players[p1Index], seed: seed1 }, { name: players[p2Index], seed: seed2 }], winner: null };
-                    // CORRECTED HTML STRUCTURE
                     matchDiv.innerHTML = `
                         <div class="match-line">
                             <div class="seed">${seed1}</div>
@@ -459,7 +458,6 @@
                     `;
                 } else {
                     bracketData[matchId] = { teams: [{ name: 'TBD', seed: null }, { name: 'TBD', seed: null }], winner: null };
-                    // CORRECTED HTML STRUCTURE FOR TBD
                     matchDiv.innerHTML = `
                         <div class="match-line">
                             <div class="seed">-</div>
@@ -562,22 +560,61 @@
         }
         
         window.addEventListener('load', () => {
-		    setTimeout(() => {
-		        initializeBracket();
-		        const scrollEl = document.getElementById('bracketScroll');
-		        const container = document.getElementById('bracketContainer');
-		        const contentW = container.scrollWidth;
-		        const viewW = scrollEl.clientWidth;
-		        if (contentW > viewW) {
-		            zoomLevel = (viewW - 25) / contentW;
-		        }
-		        updateZoom();
-		    }, 300); 
+            setTimeout(() => {
+                initializeBracket();
+                const scrollEl = document.getElementById('bracketScroll');
+                const container = document.getElementById('bracketContainer');
+                const contentW = container.scrollWidth;
+                const viewW = scrollEl.clientWidth;
+                if (contentW > viewW) {
+                    zoomLevel = (viewW - 25) / contentW;
+                }
+                updateZoom();
+            }, 300); 
         });
 
         document.getElementById('championOverlay').addEventListener('click', () => {
             document.getElementById('championOverlay').classList.remove('show');
         });
-		}
+
+        /* ===== Minimal fit-to-width for title + subtitle (binary search) =====
+           - Only adjusts font-size of #pageTitle and #pageSubtitle.
+           - No clones, no layout changes outside the header.
+           - Guarantees single line by shrinking until it fits the header width.
+        */
+        (function() {
+          function fit(el, minPx, maxPx) {
+            if (!el || !el.parentElement) return;
+            const container = el.parentElement; // header
+            // Binary search for the largest font-size that fits
+            let low = minPx, high = maxPx, best = minPx;
+            // Start big so we can shrink down
+            el.style.whiteSpace = 'nowrap';
+            el.style.fontSize = maxPx + 'px';
+            for (let i = 0; i < 12; i++) { // ~12 iterations is plenty
+              const mid = Math.floor((low + high) / 2);
+              el.style.fontSize = mid + 'px';
+              // Measure at this size
+              const fits = el.scrollWidth <= container.clientWidth;
+              if (fits) {
+                best = mid;
+                low = mid + 1; // try bigger
+              } else {
+                high = mid - 1; // go smaller
+              }
+            }
+            el.style.fontSize = best + 'px';
+          }
+          function runFit() {
+            fit(document.getElementById('pageTitle'),    12, 96);
+            fit(document.getElementById('pageSubtitle'), 10, 48);
+          }
+          window.addEventListener('load', runFit);
+          window.addEventListener('resize', runFit);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(runFit).catch(() => {});
+          }
+        })();
+    </script>
 </body>
 </html>
