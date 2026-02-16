@@ -1,11 +1,13 @@
+2.16 CODE PRESERVE (seeds display)
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rules of the Road March Madness</title>
-    <link href="https://fonts.googleapis.com/css2?family=Os0;600;700&family=Roboto+Condensed:wght@400;700&display=swap
-    <link href="https://fontscom/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <style>
         :root {
             --NavyBlack: #08262C;
@@ -49,9 +51,6 @@
             text-transform: uppercase;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            /* Enforce single line for fitting */
-            white-space: nowrap;
-            line-height: 1.1;
         }
         .subtitle {
             font-family: "Josefin Sans", sans-serif;
@@ -59,11 +58,7 @@
             color: var(--White);
             text-transform: uppercase;
             font-weight: 600;
-            font-style: italic;
-            /* Enforce single line for fitting */
-            white-space: nowrap;
-            line-height: 1.1;
-            margin: 0;
+   		    font-style: italic;
         }
         .controls {
             display: flex;
@@ -361,8 +356,8 @@
 <body>
     <div class="container">
         <header>
-            <h1 id="pageTitle">Rules of the Road March Madness</h1>
-            <p class="subtitle" id="pageSubtitle">Who rules the Rules?</p>
+            <h1>Rules of the Road March Madness</h1>
+            <p class="subtitle">Who rules the Rules?</p>
         </header>
         <div class="controls">
             <!-- <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button> -->
@@ -382,10 +377,10 @@
     </div>
     <script>
         let players = [
-            "LT Patrick Vivian", "BYE", "LT Jonathan Sodano", "LT Branden Ward", "LT Kevin Sweetman", "William Lyons", "LT Geoff Welch", "BYE", "LT David Harland", "LT Robert Beurket", "LT Wyatt Moore", "BYE", "LT Blake Fontaine", "LT Ben Severson", "David Kane", "BYE",
-            "LT Meredith Engel", "BYE", "Walt O'Donnell", "Tanner Blythe", "Katie Moore", "Jerry Tredo", "LCDR Gregory Christod", "BYE", "LCDR Alexander Kavall", "QMC Montraye Whaley", "LT John O'Connell", "BYE", "LT Branner Astrop", "LT Gregory Holmes", "Ted Olson", "BYE",
-            "LT Kevin Brunner", "BYE", "QMC Jonathon Zitt", "LCDR Jocelyn Addeo", "David Parkhurst", "CAPT Tim Steedman", "Davis Chandler", "BYE", "LT Kellen Gray", "QMC Robert Papili", "LT Alex Egbers", "BYE", "CAPT Leo Mcdonough", "QMCS Daniel Urbano", "LT Seth Bradley", "BYE",
-            "CAPT Michael Shanley", "BYE", "LT Tony Kennedy", "LT Ian Johnson", "CAPT Philip Lapointe", "CDR Michael Chesnut", "LT Gabriel Ptasienski", "BYE", "LT Alexander Mcquain", "LT Jacob Vehrs", "David Carrillo", "BYE", "LT Steven Tommasello", "LT Benjamin Deforest", "Kat Hunter", "BYE"
+			"LT Patrick Vivian", "BYE", "LT Jonathan Sodano", "LT Branden Ward", "LT Kevin Sweetman", "William Lyons", "LT Geoff Welch", "BYE", "LT David Harland", "LT Robert Beurket", "LT Wyatt Moore", "BYE", "LT Blake Fontaine", "LT Ben Severson", "David Kane", "BYE",
+			"LT Meredith Engel", "BYE", "Walt O'Donnell", "Tanner Blythe", "Katie Moore", "Jerry Tredo", "LCDR Gregory Christod", "BYE", "LCDR Alexander Kavall", "QMC Montraye Whaley", "LT John O'Connell", "BYE", "LT Branner Astrop", "LT Gregory Holmes", "Ted Olson", "BYE",
+			"LT Kevin Brunner", "BYE", "QMC Jonathon Zitt", "LCDR Jocelyn Addeo", "David Parkhurst", "CAPT Tim Steadman", "Davis Chandler", "BYE", "LT Kellen Gray", "QMC Robert Papili", "LT Alex Egbers", "BYE", "CAPT Leo Mcdonough", "QMCS Daniel Urbano", "LT Seth Bradley", "BYE",
+			"CAPT Michael Shanley", "BYE", "LT Tony Kennedy", "LT Ian Johnson", "CAPT Philip Lapointe", "CDR Michael Chesnut", "LT Gabriel Ptasienski", "BYE", "LT Alexander Mcquain", "LT Jacob Vehrs", "David Carrillo", "BYE", "LT Steven Tommasello", "LT Benjamin Deforest", "Kat Hunter", "BYE"
         ];
         const rounds = [
             { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
@@ -446,6 +441,7 @@
                     const seedPattern = [1, 16, 8, 9, 5, 12, 4, 13, 6, 11, 3, 14, 7, 10, 2, 15];
                     const seed1 = seedPattern[(matchIndex % 8) * 2], seed2 = seedPattern[(matchIndex % 8) * 2 + 1];
                     bracketData[matchId] = { teams: [{ name: players[p1Index], seed: seed1 }, { name: players[p2Index], seed: seed2 }], winner: null };
+                    // CORRECTED HTML STRUCTURE
                     matchDiv.innerHTML = `
                         <div class="match-line">
                             <div class="seed">${seed1}</div>
@@ -458,6 +454,7 @@
                     `;
                 } else {
                     bracketData[matchId] = { teams: [{ name: 'TBD', seed: null }, { name: 'TBD', seed: null }], winner: null };
+                    // CORRECTED HTML STRUCTURE FOR TBD
                     matchDiv.innerHTML = `
                         <div class="match-line">
                             <div class="seed">-</div>
@@ -560,76 +557,20 @@
         }
         
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                initializeBracket();
-                const scrollEl = document.getElementById('bracketScroll');
-                const container = document.getElementById('bracketContainer');
-                const contentW = container.scrollWidth;
-                const viewW = scrollEl.clientWidth;
-                if (contentW > viewW) {
-                    zoomLevel = (viewW - 25) / contentW;
-                }
-                updateZoom();
-            }, 300); 
+		    setTimeout(() => {
+		        initializeBracket();
+		        const scrollEl = document.getElementById('bracketScroll');
+		        const container = document.getElementById('bracketContainer');
+		        const contentW = container.scrollWidth;
+		        const viewW = scrollEl.clientWidth;
+		        if (contentW > viewW) {
+		            zoomLevel = (viewW - 25) / contentW;
+		        }
+		        updateZoom();
+		    }, 300); 
         });
 
         document.getElementById('championOverlay').addEventListener('click', () => {
             document.getElementById('championOverlay').classList.remove('show');
         });
-
-        /* ===== Title + subtitle fit-to-width (minimal + safe) =====
-           This only adjusts font-size for #pageTitle and #pageSubtitle. It won’t
-           touch any other layout or styles. It always fits to the header width. */
-        (function fitHeaderText() {
-          const header = document.querySelector('header');
-          const title = document.getElementById('pageTitle');
-          const subtitle = document.getElementById('pageSubtitle');
-          if (!header || !title || !subtitle) return;
-
-          // Read base sizes from your CSS so the default look is preserved
-          const baseTitleSize = parseFloat(getComputedStyle(title).fontSize) || 84;   // ≈ 5.25rem
-          const baseSubSize   = parseFloat(getComputedStyle(subtitle).fontSize) || 44; // ≈ 2.75rem
-
-          function fit(el, basePx, minPx, maxPx) {
-            // Reset to base for measurement
-            el.style.fontSize = basePx + 'px';
-            el.style.whiteSpace = 'nowrap';
-
-            const containerWidth = header.clientWidth;
-            const textWidth = el.scrollWidth;
-            if (!containerWidth || !textWidth) return;
-
-            let newSize = Math.floor(basePx * (containerWidth / textWidth));
-            newSize = Math.max(minPx, Math.min(maxPx, newSize));
-            el.style.fontSize = newSize + 'px';
-          }
-
-          function run() {
-            fit(title,   baseTitleSize, 12, baseTitleSize);
-            fit(subtitle,baseSubSize,   10, baseSubSize);
-          }
-
-          // Debounce via rAF
-          let rafId = 0;
-          const schedule = () => {
-            cancelAnimationFrame(rafId);
-            rafId = requestAnimationFrame(run);
-          };
-
-          // Refit when header changes size (safer for responsive layouts)
-          if (typeof ResizeObserver !== 'undefined') {
-            const ro = new ResizeObserver(schedule);
-            ro.observe(header);
-          } else {
-            window.addEventListener('resize', schedule, { passive: true });
-          }
-
-          // Initial runs (DOM ready, window load, and after web fonts load)
-          document.addEventListener('DOMContentLoaded', schedule);
-          window.addEventListener('load', schedule);
-          if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(schedule).catch(() => {});
-          }
-        })();
     </script>
-</body>
