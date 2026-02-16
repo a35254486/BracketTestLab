@@ -1221,44 +1221,92 @@
             document.getElementById('championOverlay').classList.remove('show');
         });
 
-        /* ===== Minimal fit-to-width for title + subtitle (binary search) =====
-           - Only adjusts font-size of #pageTitle and #pageSubtitle.
-           - No clones, no layout changes outside the header.
-           - Guarantees single line by shrinking until it fits the header width.
-        */
-        (function() {
-          function fit(el, minPx, maxPx) {
-            if (!el || !el.parentElement) return;
-            const container = el.parentElement; // header
-            // Binary search for the largest font-size that fits
-            let low = minPx, high = maxPx, best = minPx;
-            // Start big so we can shrink down
-            el.style.whiteSpace = 'nowrap';
-            el.style.fontSize = maxPx + 'px';
-            for (let i = 0; i < 12; i++) { // ~12 iterations is plenty
-              const mid = Math.floor((low + high) / 2);
-              el.style.fontSize = mid + 'px';
-              // Measure at this size
-              const fits = el.scrollWidth <= container.clientWidth;
-              if (fits) {
-                best = mid;
-                low = mid + 1; // try bigger
-              } else {
-                high = mid - 1; // go smaller
-              }
-            }
-            el.style.fontSize = best + 'px';
-          }
-          function runFit() {
-            fit(document.getElementById('pageTitle'),    12, 96);
-            fit(document.getElementById('pageSubtitle'), 10, 48);
-          }
-          window.addEventListener('load', runFit);
-          window.addEventListener('resize', runFit);
-          if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(runFit).catch(() => {});
-          }
-        })();
+      
+/* ===== Robust fit-to-width using off-screen measurement =====
+   - Measures natural text width at your base font sizes with the actual font + letter-spacing.
+   - Computes a direct scale so full-screen keeps your original size unless needed.
+   - Adds a small safety margin and verifies the final rendered width.
+*/
+(function() {
+  const SAFE_RATIO = 0.97; // leave ~3% breathing room inside the header
+
+  // Measure text width off-screen using current font properties
+  function measureTextWidth(el, sizePx) {
+    const cs = getComputedStyle(el);
+    const span = document.createElement('span');
+    span.textContent = el.textContent;
+
+    Object.assign(span.style, {
+      position: 'absolute',
+      left: '-9999px',
+      top: '-9999px',
+      whiteSpace: 'nowrap',
+      fontFamily: cs.fontFamily,
+      fontWeight: cs.fontWeight,
+      fontStyle: cs.fontStyle,
+      letterSpacing: cs.letterSpacing,
+      textTransform: cs.textTransform,
+      fontSize: sizePx + 'px'
+    });
+
+    document.body.appendChild(span);
+    const width = Math.ceil(span.getBoundingClientRect().width);
+    document.body.removeChild(span);
+    return width;
+  }
+
+  function fit(el, minPx, basePx, maxPx) {
+    if (!el || !el.parentElement) return;
+    const container = el.parentElement; // <header>
+    const available = Math.floor(container.clientWidth * SAFE_RATIO);
+    if (!available) return;
+
+    // Measure the natural width at your CSS base size
+    const textWidth = measureTextWidth(el, basePx);
+    if (!textWidth) return;
+
+    // Direct scale: newSize = base * (available / textWidth)
+    let newSize = Math.floor(basePx * (available / textWidth));
+
+    // Clamp to min/max
+    newSize = Math.max(minPx, Math.min(maxPx, newSize));
+    el.style.fontSize = newSize + 'px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.lineHeight = '1.1';
+    el.style.margin = '0';
+
+    // Final verification: nudge down if fractional overflow remains
+    const rendered = Math.ceil(el.getBoundingClientRect().width);
+    if (rendered > available) {
+      const shave = Math.min(2, rendered - available); // at most 2px
+      el.style.fontSize = Math.max(minPx, newSize - shave) + 'px';
+    }
+  }
+
+  function runFit() {
+    const title = document.getElementById('pageTitle');
+    const subtitle = document.getElementById('pageSubtitle');
+    if (!title || !subtitle) return;
+
+    // Read your CSS base sizes so full-screen uses your original look
+    const baseTitle = parseFloat(getComputedStyle(title).fontSize) || 84; // ≈ 5.25rem
+    const baseSub   = parseFloat(getComputedStyle(subtitle).fontSize) || 44; // ≈ 2.75rem
+
+    fit(title,    12, baseTitle, 96);
+    fit(subtitle, 10, baseSub,    48);
+  }
+
+  const schedule = () => requestAnimationFrame(runFit);
+
+  // Run after DOM ready, window load, and when web fonts have finished loading
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(schedule).catch(() => {});
+  }
+})();
+
     </script>
 </body>
 </html>
