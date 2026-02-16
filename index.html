@@ -45,7 +45,7 @@
         h1 {
             font-family: "Josefin Sans", sans-serif;
             /* Responsive font size: shrinks on narrow viewports, grows back up to original */
-            font-size: clamp(1.25rem, 7.8vw, 4rem);
+            font-size: clamp(1rem, 7.8vw, 5rem);
             color: var(--White);
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -680,4 +680,111 @@
 })();
 
     </script>
+
+<script>
+/* Exact fit-to-width for title + subtitle:
+   - Computes the precise font-size so each line fits the header width.
+   - Works on grow + shrink (restores original size when there's room).
+   - Uses off-screen measurement with your actual font + letter-spacing.
+*/
+(function() {
+  const PADDING_PIXELS = 2;     // tiny breathing room so text doesn't hit the border
+  const MAX_ITERS = 2;          // one compute + one correction pass is usually enough
+
+  // Cache the original (CSS) base sizes once so we can always "grow back" to them.
+  let BASE_TITLE_PX = null;
+  let BASE_SUB_PX   = null;
+
+  // Measure text width off-screen at a given size using current font properties
+  function measureTextWidth(el, sizePx) {
+    const cs = getComputedStyle(el);
+    const span = document.createElement('span');
+    span.textContent = el.textContent;
+    Object.assign(span.style, {
+      position: 'absolute',
+      left: '-9999px',
+      top: '-9999px',
+      whiteSpace: 'nowrap',
+      fontFamily: cs.fontFamily,
+      fontWeight: cs.fontWeight,
+      fontStyle: cs.fontStyle,
+      letterSpacing: cs.letterSpacing,
+      textTransform: cs.textTransform,
+      fontSize: sizePx + 'px',
+      lineHeight: '1.1'
+    });
+    document.body.appendChild(span);
+    const width = Math.ceil(span.getBoundingClientRect().width);
+    document.body.removeChild(span);
+    return width;
+  }
+
+  function fitExactly(el, basePx, minPx) {
+    if (!el) return;
+    const header = el.closest('header');
+    if (!header) return;
+
+    const available = Math.max(0, header.clientWidth - PADDING_PIXELS);
+    if (available === 0) return;
+
+    // 1) Measure the natural width at base size
+    const wBase = measureTextWidth(el, basePx);
+    if (!wBase) return;
+
+    // 2) If base fits, restore base (grow back when window widens)
+    if (wBase <= available) {
+      el.style.fontSize = basePx + 'px';
+      el.style.whiteSpace = 'nowrap';
+      el.style.lineHeight = '1.1';
+      el.style.margin = '0';
+      return;
+    }
+
+    // 3) Otherwise compute the exact font size that should fit: size = base * (available / wBase)
+    let sizePx = Math.floor(basePx * (available / wBase));
+    sizePx = Math.max(minPx, sizePx);
+
+    // 4) Apply and optionally do a tiny correction pass for rounding / letter-spacing
+    for (let i = 0; i < MAX_ITERS; i++) {
+      el.style.fontSize = sizePx + 'px';
+      el.style.whiteSpace = 'nowrap';
+      el.style.lineHeight = '1.1';
+      el.style.margin = '0';
+
+      const rendered = Math.ceil(el.getBoundingClientRect().width);
+      if (rendered > available && sizePx > minPx) {
+        sizePx = Math.max(minPx, sizePx - Math.min(2, rendered - available)); // shave 1–2px if needed
+      } else {
+        break;
+      }
+    }
+  }
+
+  function runFit() {
+    const title = document.getElementById('pageTitle');
+    const sub   = document.getElementById('pageSubtitle');
+    if (!title || !sub) return;
+
+    if (BASE_TITLE_PX == null) BASE_TITLE_PX = parseFloat(getComputedStyle(title).fontSize) || 84; // 5.25rem ≈ 84px
+    if (BASE_SUB_PX   == null) BASE_SUB_PX   = parseFloat(getComputedStyle(sub).fontSize)   || 44; // 2.75rem ≈ 44px
+
+    fitExactly(title, BASE_TITLE_PX, 12);  // min readable size
+    fitExactly(sub,   BASE_SUB_PX,   10);
+  }
+
+  const schedule = () => requestAnimationFrame(runFit);
+
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule,   { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(schedule).catch(() => {});
+  }
+  const headerEl = document.querySelector('header');
+  if (headerEl && 'ResizeObserver' in window) {
+    new ResizeObserver(schedule).observe(headerEl);
+  }
+})();
+</script>
+
 </body>
