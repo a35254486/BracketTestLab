@@ -585,44 +585,67 @@
             document.getElementById('championOverlay').classList.remove('show');
         });
 
-        /* ===== Minimal fit-to-width for title + subtitle (binary search) =====
-           - Only adjusts font-size of #pageTitle and #pageSubtitle.
-           - No clones, no layout changes outside the header.
-           - Guarantees single line by shrinking until it fits the header width.
-        */
-        (function() {
-          function fit(el, minPx, maxPx) {
-            if (!el || !el.parentElement) return;
-            const container = el.parentElement; // header
-            // Binary search for the largest font-size that fits
-            let low = minPx, high = maxPx, best = minPx;
-            // Start big so we can shrink down
-            el.style.whiteSpace = 'nowrap';
-            el.style.fontSize = maxPx + 'px';
-            for (let i = 0; i < 12; i++) { // ~12 iterations is plenty
-              const mid = Math.floor((low + high) / 2);
-              el.style.fontSize = mid + 'px';
-              // Measure at this size
-              const fits = el.scrollWidth <= container.clientWidth;
-              if (fits) {
-                best = mid;
-                low = mid + 1; // try bigger
-              } else {
-                high = mid - 1; // go smaller
-              }
-            }
-            el.style.fontSize = best + 'px';
-          }
-          function runFit() {
-            fit(document.getElementById('pageTitle'),    12, 96);
-            fit(document.getElementById('pageSubtitle'), 10, 48);
-          }
-          window.addEventListener('load', runFit);
-          window.addEventListener('resize', runFit);
-          if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(runFit).catch(() => {});
-          }
-        })();
+  
+/* ===== Robust fit-to-width for title + subtitle (safe margins) =====
+   - Binary search for the largest font-size that fits WITH a small safety margin.
+   - Verifies the final rendered width (getBoundingClientRect) and nudges down if needed.
+   - Does not touch any layout outside the header.
+*/
+(function() {
+  const SAFE_RATIO = 0.98; // shrink target slightly so text never kisses the border
+
+  function fit(el, minPx, maxPx) {
+    if (!el || !el.parentElement) return;
+    const container = el.parentElement; // <header>
+    el.style.whiteSpace = 'nowrap';
+    el.style.lineHeight = '1.1';
+    el.style.margin = '0';
+
+    // Effective available width with a small safety margin
+    const available = Math.floor(container.clientWidth * SAFE_RATIO);
+    if (!available) return;
+
+    // Binary search for best font size
+    let low = minPx, high = maxPx, best = minPx;
+    for (let i = 0; i < 12; i++) { // ~12 iterations gets us to 1px precision
+      const mid = Math.floor((low + high) / 2);
+      el.style.fontSize = mid + 'px';
+      // Compare scrollWidth (content width) to available
+      const fits = el.scrollWidth <= available;
+      if (fits) {
+        best = mid;
+        low = mid + 1; // try bigger
+      } else {
+        high = mid - 1; // go smaller
+      }
+    }
+
+    // Set best size found
+    el.style.fontSize = best + 'px';
+
+    // Final verification: if the *rendered* width (including letter-spacing) is too wide, nudge down 1–2px
+    let rect = el.getBoundingClientRect();
+    // account for fractional pixels and DPR
+    const rendered = Math.ceil(rect.width);
+    if (rendered > available) {
+      const nudge = Math.min(2, rendered - available); // shave off 1–2px if needed
+      el.style.fontSize = Math.max(minPx, best - nudge) + 'px';
+    }
+  }
+
+  function runFit() {
+    fit(document.getElementById('pageTitle'),    12, 96);
+    fit(document.getElementById('pageSubtitle'), 10, 48);
+  }
+
+  // Run on load, resize, and after web fonts load
+  window.addEventListener('load', runFit, { passive: true });
+  window.addEventListener('resize', runFit, { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(runFit).catch(() => {});
+  }
+})();
+
     </script>
 </body>
 </html>
