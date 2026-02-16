@@ -47,7 +47,8 @@
             background-color: var(--NavyBlack);
             border: 4px solid var(--Yellow); 
             padding: 0.5rem;                 
-            border-radius: 10px;              
+            border-radius: 10px;    
+            overflow: hidden
         }
         h1 {
             font-family: "Josefin Sans", sans-serif;
@@ -1301,6 +1302,63 @@
   // Run after DOM ready, window load, and when web fonts have finished loading
   document.addEventListener('DOMContentLoaded', schedule);
   window.addEventListener('load', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(schedule).catch(() => {});
+  }
+})();
+
+/* Shrink-only fitter: keeps base sizes unless the text actually exceeds the header width */
+(function() {
+  const SAFE_RATIO = 0.98; // small breathing room so text never hits the border
+
+  function shrinkToFit(el, basePx, minPx) {
+    if (!el || !el.parentElement) return;
+    const container = el.parentElement; // <header>
+
+    // Reset to base size for each measurement (so it can grow back when there's room)
+    el.style.fontSize = basePx + 'px';
+    el.style.whiteSpace = 'nowrap';
+    el.style.lineHeight = '1.1';
+    el.style.margin = '0';
+
+    const available = Math.floor(container.clientWidth * SAFE_RATIO);
+    if (!available) return;
+
+    // If it already fits at base size, leave it alone
+    if (el.scrollWidth <= available) return;
+
+    // Direct scale to shrink from base size
+    let newSize = Math.floor(basePx * (available / el.scrollWidth));
+    newSize = Math.max(minPx, Math.min(basePx, newSize));
+    el.style.fontSize = newSize + 'px';
+
+    // Final verification: adjust by 1–2px if fractional overflow remains
+    const rendered = Math.ceil(el.getBoundingClientRect().width);
+    if (rendered > available) {
+      const shave = Math.min(2, rendered - available);
+      el.style.fontSize = Math.max(minPx, newSize - shave) + 'px';
+    }
+  }
+
+  function runFit() {
+    const title = document.getElementById('pageTitle');
+    const subtitle = document.getElementById('pageSubtitle');
+    if (!title || !subtitle) return;
+
+    // Read CSS base sizes (so full-screen looks like your original design)
+    const baseTitle = parseFloat(getComputedStyle(title).fontSize) || 84; // ≈ 5.25rem
+    const baseSub   = parseFloat(getComputedStyle(subtitle).fontSize) || 44; // ≈ 2.75rem
+
+    shrinkToFit(title,   baseTitle, 12);
+    shrinkToFit(subtitle,baseSub,   10);
+  }
+
+  const schedule = () => requestAnimationFrame(runFit);
+
+  // Fit on DOM ready, window load/resize, and after web fonts load
+  document.addEventListener('DOMContentLoaded', schedule);
+  window.addEventListener('load', schedule,   { passive: true });
   window.addEventListener('resize', schedule, { passive: true });
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(schedule).catch(() => {});
