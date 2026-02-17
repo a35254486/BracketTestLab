@@ -638,7 +638,7 @@ document.getElementById('championOverlay').addEventListener('click', () => {
   const container = el.parentElement;
   let size = 100;
   el.style.fontSize = size + 'px';
-  while (el.scrollWidth > container.clientWidth -10 && size > 1) {
+  while (el.scrollWidth > container.clientWidth -50 && size > 1) {
     size--;
     el.style.fontSize = size + 'px';
   }
