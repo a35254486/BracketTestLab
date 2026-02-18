@@ -639,7 +639,7 @@ document.getElementById('championOverlay').addEventListener('click', () => {
   const container = el.parentElement;
   let size = 100;
   el.style.fontSize = size + 'px';
-  while (el.scrollWidth > container.clientWidth -15 && size > 1) {
+  while (el.scrollWidth > container.clientWidth -5 && size > 1) {
     size--;
     el.style.fontSize = size + 'px';
   }
