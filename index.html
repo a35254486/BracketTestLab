@@ -634,25 +634,26 @@
 document.getElementById('championOverlay').addEventListener('click', () => {
     document.getElementById('championOverlay').classList.remove('show');
 });
-	      function fitText(selector) {
-	        const el = document.querySelector(selector);
-	        if (!el) return;
-	        const container = el.parentElement;
-	        let size = 300;
-	        el.style.fontSize = size + 'px';
-	        while (el.scrollWidth > container.clientWidth - 10 && size > 1) {
-	          size--;
-	          el.style.fontSize = size + 'px';
-	        }
-	      }
-	      window.addEventListener('resize', function() {
-	        fitText('h1');
-	        fitText('.subtitle');
-	      });
-	      window.addEventListener('load', function() {
-	        fitText('h1');
-	        fitText('.subtitle');
-	      });
+		function fitText(selector, buffer) {
+		  const el = document.querySelector(selector);
+		  if (!el) return;
+		  const container = el.parentElement;
+		  let size = 300;
+		  el.style.fontSize = size + 'px';
+		  while (el.scrollWidth > container.clientWidth - buffer && size > 1) {
+		    size--;
+		    el.style.fontSize = size + 'px';
+		  }
+		}
+		
+		window.addEventListener('resize', function() {
+		  fitText('h1', 10);
+		  fitText('.subtitle', 400);
+		});
+		window.addEventListener('load', function() {
+		  fitText('h1', 10);
+		  fitText('.subtitle', 400);
+		});
 		</script>
 	</body>
 </html>
