@@ -647,9 +647,9 @@ document.getElementById('championOverlay').addEventListener('click', () => {
 		}
 		
 		window.addEventListener('resize', function() {
-		  fitText('h1', 20);
-		  fitText('.subtitle', 100);
-		});
+		  fitText('h1', 25);
+		  const h1Size = parseFloat(document.querySelector('h1').style.fontSize);
+		  document.querySelector('.subtitle').style.fontSize = (h1Size * 0.5) + 'px';;
 		</script>
 	</body>
 </html>
