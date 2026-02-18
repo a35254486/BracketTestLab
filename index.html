@@ -634,33 +634,25 @@
 document.getElementById('championOverlay').addEventListener('click', () => {
     document.getElementById('championOverlay').classList.remove('show');
 });
-		function fitText() {
-  const el = document.querySelector('h1');
-  const container = el.parentElement;
-  let size = 50;
-  el.style.fontSize = size + 'px';
-  while (el.scrollWidth > container.clientWidth -15 && size > 1) {
-    size--;
-    el.style.fontSize = size + 'px';
-  }
-}
-
-window.addEventListener('resize', fitText);
-window.addEventListener('load', fitText);
-		
-		function fitText() {
-  const el = document.querySelector('.subtitle');
-  const container = el.parentElement;
-  let size = 50;
-  el.style.fontSize = size + 'px';
-  while (el.scrollWidth > container.clientWidth -15 && size > 1) {
-    size--;
-    el.style.fontSize = size + 'px';
-  }
-}
-
-window.addEventListener('resize', fitText);
-window.addEventListener('load', fitText);
-    </script>
-</body>
+	      function fitText(selector) {
+	        const el = document.querySelector(selector);
+	        if (!el) return;
+	        const container = el.parentElement;
+	        let size = 300;
+	        el.style.fontSize = size + 'px';
+	        while (el.scrollWidth > container.clientWidth - 10 && size > 1) {
+	          size--;
+	          el.style.fontSize = size + 'px';
+	        }
+	      }
+	      window.addEventListener('resize', function() {
+	        fitText('h1');
+	        fitText('.subtitle');
+	      });
+	      window.addEventListener('load', function() {
+	        fitText('h1');
+	        fitText('.subtitle');
+	      });
+		</script>
+	</body>
 </html>
