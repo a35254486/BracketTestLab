@@ -627,7 +627,7 @@
 		            zoomLevel = (viewW - 25) / contentW;
 		        }
 		        updateZoom();
-		    }, 300); 
+		    }, 350); 
 });
 
 // --- Allows user to click overlay to close it ---
@@ -636,6 +636,20 @@ document.getElementById('championOverlay').addEventListener('click', () => {
 });
 		function fitText() {
   const el = document.querySelector('h1');
+  const container = el.parentElement;
+  let size = 100;
+  el.style.fontSize = size + 'px';
+  while (el.scrollWidth > container.clientWidth -15 && size > 1) {
+    size--;
+    el.style.fontSize = size + 'px';
+  }
+}
+
+window.addEventListener('resize', fitText);
+window.addEventListener('load', fitText);
+		
+		function fitText() {
+  const el = document.querySelector('.subtitle');
   const container = el.parentElement;
   let size = 100;
   el.style.fontSize = size + 'px';
