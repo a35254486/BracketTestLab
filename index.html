@@ -651,7 +651,7 @@ window.addEventListener('load', fitText);
 		function fitText() {
   const el = document.querySelector('.subtitle');
   const container = el.parentElement;
-  let size = 100;
+  let size = 50;
   el.style.fontSize = size + 'px';
   while (el.scrollWidth > container.clientWidth -15 && size > 1) {
     size--;
