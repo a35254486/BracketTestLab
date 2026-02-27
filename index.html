@@ -400,7 +400,6 @@
                 initializeBracket();
                 
                 // 2. *** NEW STEP ***: Populate the bracket with winners from the file
-                populateWinners(bracketData);
 
                 // 3. Zoom to fit after a brief delay
 		        setTimeout(() => {
@@ -451,73 +450,79 @@
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
+
             const header = document.createElement('div');
             header.className = 'round-header';
             header.textContent = round.name;
             roundDiv.appendChild(header);
+
             const matchesDiv = document.createElement('div');
             matchesDiv.className = 'round-matches';
+
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
+                
                 const matchDiv = document.createElement('div');
                 matchDiv.className = 'match';
                 matchDiv.dataset.matchId = matchId;
+
+                // Get the specific match data from the pre-loaded bracketData
                 const matchData = bracketData[matchId];
-                if (!matchData) continue;
-                const team1 = matchData.teams[0];
-                const team2 = matchData.teams[1];
+                if (!matchData) {
+                    console.warn(`Data for match ${matchId} not found.`);
+                    continue; // Skip if match data is missing
+                }
+
+                // *** THIS IS THE CORE FIX ***
+                // Instead of just taking the names, we now check if we need to
+                // populate them from a previous round's winner.
+                let team1 = matchData.teams[0];
+                let team2 = matchData.teams[1];
+
+                // For any round AFTER the first, we check for winners.
+                if (roundIndex > 0) {
+                    // Find the two matches from the PREVIOUS round that feed into this one.
+                    const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
+                    const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
+
+                    const prevMatch1 = bracketData[prevMatchId1];
+                    const prevMatch2 = bracketData[prevMatchId2];
+
+                    // If the first previous match has a winner, that winner becomes team1 here.
+                    if (prevMatch1 && prevMatch1.winner !== null) {
+                        team1 = prevMatch1.teams[prevMatch1.winner];
+                    }
+
+                    // If the second previous match has a winner, that winner becomes team2 here.
+                    if (prevMatch2 && prevMatch2.winner !== null) {
+                        team2 = prevMatch2.teams[prevMatch2.winner];
+                    }
+                }
+
+                // Build the HTML for the two teams in the match using the potentially updated team info.
                 matchDiv.innerHTML = `
                     <div class="match-line">
                         <div class="team" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
                         <div class="team" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
                     </div>
                 `;
+
+                // Now, check if the CURRENT match has a winner and apply styling.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
                     const loserIndex = winnerIndex === 0 ? 1 : 0;
+                    
                     if (teamsInMatch[winnerIndex]) teamsInMatch[winnerIndex].classList.add('winner');
                     if (teamsInMatch[loserIndex]) teamsInMatch[loserIndex].classList.add('loser');
                 }
+                
                 matchesDiv.appendChild(matchDiv);
             }
             roundDiv.appendChild(matchesDiv);
             return roundDiv;
         }
-        
-        // --- *** NEW FUNCTION TO FIX THE BUG *** ---
-        // This runs once on page load to advance all winners from the JSON file
-        function populateWinners(data) {
-            // Loop through every match ID in the loaded data (e.g., "r0-m0", "r0-m1", etc.)
-            for (const matchId in data) {
-                const match = data[matchId];
-                
-                // If a winner exists for this match...
-                if (match.winner !== null) {
-                    const winningTeam = match.teams[match.winner];
-                    
-                    // ...and that winner has a name (isn't "TBD")...
-                    if (winningTeam && winningTeam.name !== 'TBD') {
-                        // ...then advance them visually on the bracket.
-                        // This uses the exact same logic as the advanceWinner() function.
-                        const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-
-                        if (roundNum >= rounds.length - 1) continue; // Don't advance the final champion
-
-                        const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
-                        const position = matchNum % 2;
-
-                        const nextTeamDiv = document.querySelector(`[data-match-id="${nextMatchId}"] [data-team="${position}"]`);
-                        
-                        if (nextTeamDiv) {
-                            nextTeamDiv.innerHTML = `<span class="seed">${winningTeam.seed || '-'}</span>${winningTeam.name}`;
-                        }
-                    }
-                }
-            }
-        }
-
         // --- All functions below this line remain the same ---
         function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
         function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
