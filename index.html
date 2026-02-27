@@ -388,21 +388,21 @@
         ];
 
         // --- NEW LOADING LOGIC ---
-        // This function now runs when the page loads
         async function loadAndInitialize() {
             try {
-                // 1. Fetch the data from your new JSON file
                 const response = await fetch('bracket.json');
                 if (!response.ok) {
                     throw new Error('Could not load bracket.json. Make sure the file is in the same folder as your index.html.');
                 }
-                // 2. Assign the loaded data to our global variable
                 bracketData = await response.json();
 
-                // 3. Now that data is loaded, build the visual bracket
+                // 1. Build the initial HTML structure of the bracket
                 initializeBracket();
                 
-		        // A small delay to let fonts and elements settle before zooming
+                // 2. *** NEW STEP ***: Populate the bracket with winners from the file
+                populateWinners(bracketData);
+
+                // 3. Zoom to fit after a brief delay
 		        setTimeout(() => {
 		            const scrollEl = document.getElementById('bracketScroll');
 		            const container = document.getElementById('bracketContainer');
@@ -422,21 +422,16 @@
         
         function initializeBracket() {
             const bracket = document.getElementById('bracket');
-            bracket.innerHTML = ''; // Clear any existing content
-            
+            bracket.innerHTML = '';
             const leftHalf = document.createElement('div');
             leftHalf.className = 'bracket-half left';
             const rightHalf = document.createElement('div');
             rightHalf.className = 'bracket-half right';
-
-            // Create the first 5 rounds
             for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
                 const round = rounds[roundIndex];
                 leftHalf.appendChild(createRound(round, roundIndex, 0, round.matches / 2));
                 rightHalf.appendChild(createRound(round, roundIndex, round.matches / 2, round.matches / 2));
             }
-
-            // Create the finals column in the center
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
             const finalsRound = createRound(rounds[5], 5, 0, 1);
@@ -446,18 +441,13 @@
             logo.className = 'center-logo';
             finalsDiv.appendChild(logo);
             finalsDiv.appendChild(finalsRound);
-
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
             bracket.appendChild(rightHalf);
-
-            // Attach all the interactivity
             attachClickHandlers();
             attachHoverHandlers();
         }
 
-        // --- MODIFIED createRound FUNCTION ---
-        // This function now READS from bracketData instead of writing to it
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
@@ -467,49 +457,68 @@
             roundDiv.appendChild(header);
             const matchesDiv = document.createElement('div');
             matchesDiv.className = 'round-matches';
-
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
-                
                 const matchDiv = document.createElement('div');
                 matchDiv.className = 'match';
                 matchDiv.dataset.matchId = matchId;
-
-                // Get the specific match data from the pre-loaded bracketData
                 const matchData = bracketData[matchId];
-                if (!matchData) continue; // Skip if match data is missing
-
+                if (!matchData) continue;
                 const team1 = matchData.teams[0];
                 const team2 = matchData.teams[1];
-
-                // Build the HTML for the two teams in the match
                 matchDiv.innerHTML = `
                     <div class="match-line">
                         <div class="team" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
                         <div class="team" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
                     </div>
                 `;
-
-                // IMPORTANT: Check if a winner was set in the JSON and apply styles
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
                     const loserIndex = winnerIndex === 0 ? 1 : 0;
-                    
                     if (teamsInMatch[winnerIndex]) teamsInMatch[winnerIndex].classList.add('winner');
                     if (teamsInMatch[loserIndex]) teamsInMatch[loserIndex].classList.add('loser');
                 }
-                
                 matchesDiv.appendChild(matchDiv);
             }
             roundDiv.appendChild(matchesDiv);
             return roundDiv;
         }
+        
+        // --- *** NEW FUNCTION TO FIX THE BUG *** ---
+        // This runs once on page load to advance all winners from the JSON file
+        function populateWinners(data) {
+            // Loop through every match ID in the loaded data (e.g., "r0-m0", "r0-m1", etc.)
+            for (const matchId in data) {
+                const match = data[matchId];
+                
+                // If a winner exists for this match...
+                if (match.winner !== null) {
+                    const winningTeam = match.teams[match.winner];
+                    
+                    // ...and that winner has a name (isn't "TBD")...
+                    if (winningTeam && winningTeam.name !== 'TBD') {
+                        // ...then advance them visually on the bracket.
+                        // This uses the exact same logic as the advanceWinner() function.
+                        const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+
+                        if (roundNum >= rounds.length - 1) continue; // Don't advance the final champion
+
+                        const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
+                        const position = matchNum % 2;
+
+                        const nextTeamDiv = document.querySelector(`[data-match-id="${nextMatchId}"] [data-team="${position}"]`);
+                        
+                        if (nextTeamDiv) {
+                            nextTeamDiv.innerHTML = `<span class="seed">${winningTeam.seed || '-'}</span>${winningTeam.name}`;
+                        }
+                    }
+                }
+            }
+        }
 
         // --- All functions below this line remain the same ---
-        // They already work by modifying the global bracketData object
-
         function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
         function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
         
@@ -518,8 +527,6 @@
         function updateZoom() {
             const container = document.getElementById('bracketContainer');
             container.style.zoom = zoomLevel;
-            // The original zoomLevel span was removed from HTML, so commenting this out.
-            // document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
 
         function selectWinner(matchId, teamIndex) {
@@ -580,9 +587,7 @@
                 if (teamToClear) {
                     teamToClear.innerHTML = `<span class="seed">-</span>TBD`;
                 }
-                nextMatchDiv.querySelectorAll('.team').forEach(team => {
-                    team.classList.remove('winner', 'loser');
-                });
+                nextMatchDiv.querySelectorAll('.team').forEach(team => team.classList.remove('winner', 'loser'));
             }
         }
 
@@ -602,35 +607,24 @@
             loadAndInitialize();
         }
 
-        // --- FINAL INITIALIZATION LOGIC ---
-        // This is the starting point that kicks everything off
-        window.addEventListener('load', loadAndInitialize);
-        document.getElementById('championOverlay').addEventListener('click', () => { document.getElementById('championOverlay').classList.remove('show'); });
-
-        // FitText and resize functions remain the same
-        function fitText(selector, buffer) {
-          const el = document.querySelector(selector);
-          if (!el) return;
-          const container = el.parentElement;
-          let low = 1, high = 300, size = 300;
-          while (low <= high) {
-            let mid = Math.floor((low + high) / 2);
-            el.style.fontSize = mid + 'px';
-            if (el.scrollWidth <= container.clientWidth - buffer) {
-              size = mid;
-              low = mid + 1;
-            } else {
-              high = mid - 1;
-            }
-          }
-          el.style.fontSize = size + 'px';
+        function exportBracket() {
+            const dataToSave = bracketData; 
+            const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tournament-bracket.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
-        window.addEventListener('resize', function() {
-          fitText('h1', 25);
-          const h1Size = parseFloat(document.querySelector('h1').style.fontSize);
-          document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px';
-        });
+        window.addEventListener('load', loadAndInitialize);
+        document.getElementById('championOverlay').addEventListener('click', () => { document.getElementById('championOverlay').classList.remove('show'); });
+        
+        function fitText(selector, buffer) { const el = document.querySelector(selector); if (!el) return; const container = el.parentElement; let low = 1, high = 300, size = 300; while (low <= high) { let mid = Math.floor((low + high) / 2); el.style.fontSize = mid + 'px'; if (el.scrollWidth <= container.clientWidth - buffer) { size = mid; low = mid + 1; } else { high = mid - 1; } } el.style.fontSize = size + 'px'; }
+        window.addEventListener('resize', function() { fitText('h1', 25); const h1Size = parseFloat(document.querySelector('h1').style.fontSize); document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px'; });
 
 		</script>
 	</body>
