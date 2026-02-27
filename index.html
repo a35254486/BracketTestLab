@@ -354,8 +354,9 @@
             <h1>Rules of the Road March Madness </h1>
             <p class="subtitle">Who rules the Rules?</p>
         </header>
-        <div class="controls">
-            <!-- hide all this shit <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button>
+	<div class="controls">
+	    <button id="exportBtn" class="btn-Yellow" onclick="exportBracket()" style="display: none;">Export Updated Data</button>
+		<!-- hide all this shit <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button>
             <button class="btn-Yellow" onclick="exportBracket()">Export Data</button> 
             <div class="zoom-controls">
                 <button class="btn-secondary" onclick="zoomOut()">-</button>
@@ -389,7 +390,17 @@
 
         // --- NEW LOADING LOGIC ---
         async function loadAndInitialize() {
-            try {
+            // Check if the URL has "?admin=true" at the end
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('admin') === 'true') {
+                // If it does, find our hidden button and show it
+                const exportButton = document.getElementById('exportBtn');
+                if (exportButton) {
+                    exportButton.style.display = 'block';
+                }
+            }
+            // --- END OF BLOCK ---
+			try {
                 const response = await fetch('bracket.json');
                 if (!response.ok) {
                     throw new Error('Could not load bracket.json. Make sure the file is in the same folder as your index.html.');
@@ -630,6 +641,53 @@
         
         function fitText(selector, buffer) { const el = document.querySelector(selector); if (!el) return; const container = el.parentElement; let low = 1, high = 300, size = 300; while (low <= high) { let mid = Math.floor((low + high) / 2); el.style.fontSize = mid + 'px'; if (el.scrollWidth <= container.clientWidth - buffer) { size = mid; low = mid + 1; } else { high = mid - 1; } } el.style.fontSize = size + 'px'; }
         window.addEventListener('resize', function() { fitText('h1', 25); const h1Size = parseFloat(document.querySelector('h1').style.fontSize); document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px'; });
+
+		function exportBracket() {
+            // Create a deep copy of the data to avoid modifying the live bracket
+            const dataToExport = JSON.parse(JSON.stringify(bracketData));
+
+            // Loop through all rounds and matches in our new export object
+            for (const matchId in dataToExport) {
+                const match = dataToExport[matchId];
+                const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+                
+                const roundName = rounds[roundNum] ? rounds[roundNum].name : 'UNKNOWN ROUND';
+                let label = `${roundName}: `;
+
+                // For the first round, the label is simple: Team 1 vs Team 2
+                if (roundNum === 0) {
+                    const team1Name = match.teams[0] ? match.teams[0].name : 'TBD';
+                    const team2Name = match.teams[1] ? match.teams[1].name : 'TBD';
+                    label += `${team1Name} vs. ${team2Name}`;
+                } 
+                // For all later rounds, we build a descriptive label
+                else {
+                    const prevMatchId1 = `r${roundNum - 1}-m${matchNum * 2}`;
+                    const prevMatchId2 = `r${roundNum - 1}-m${matchNum * 2 + 1}`;
+                    
+                    const prevMatch1 = dataToExport[prevMatchId1];
+                    const prevMatch2 = dataToExport[prevMatchId2];
+
+                    const prevMatch1Desc = prevMatch1 ? `(${prevMatch1.teams[0].name} vs. ${prevMatch1.teams[1].name})` : 'Unknown Match';
+                    const prevMatch2Desc = prevMatch2 ? `(${prevMatch2.teams[0].name} vs. ${prevMatch2.teams[1].name})` : 'Unknown Match';
+
+                    label += `Winner of ${prevMatch1Desc} vs. Winner of ${prevMatch2Desc}`;
+                }
+                // Add the new human-readable label to the match object
+                match.label = label;
+            }
+
+            // Convert the enhanced object to JSON and trigger the download
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bracket.json'; // Name the file correctly
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
 		</script>
 	</body>
