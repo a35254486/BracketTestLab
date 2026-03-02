@@ -24,7 +24,7 @@
         "seed": 9
       }
     ],
-    "winner": 0,
+    "winner": null,
     "label": "FIRST ROUND: LT Tony Kennedy vs. LT Ian Johnson"
   },
   "r0-m2": {
@@ -38,7 +38,7 @@
         "seed": 12
       }
     ],
-    "winner": 0,
+    "winner": null,
     "label": "FIRST ROUND: LCDR Alexander Kavall vs. William Lyons"
   },
   "r0-m3": {
@@ -80,7 +80,7 @@
         "seed": 14
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: Davis Chandler vs. BYE"
   },
   "r0-m6": {
@@ -108,7 +108,7 @@
         "seed": 15
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: David Kane vs. BYE"
   },
   "r0-m8": {
@@ -122,7 +122,7 @@
         "seed": 16
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Meredith Engel vs. BYE"
   },
   "r0-m9": {
@@ -164,7 +164,7 @@
         "seed": 13
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Gabriel Ptasienski vs. BYE"
   },
   "r0-m12": {
@@ -192,7 +192,7 @@
         "seed": 14
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Wyatt Moore vs. BYE"
   },
   "r0-m14": {
@@ -220,7 +220,7 @@
         "seed": 15
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: Ted Olson vs. BYE"
   },
   "r0-m16": {
@@ -234,7 +234,7 @@
         "seed": 16
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Kevin Brunner vs. BYE"
   },
   "r0-m17": {
@@ -262,7 +262,7 @@
         "seed": 12
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: Katie Moore vs. BYE"
   },
   "r0-m19": {
@@ -276,7 +276,7 @@
         "seed": 13
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LCDR Gregory Christod vs. BYE"
   },
   "r0-m20": {
@@ -304,7 +304,7 @@
         "seed": 14
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT John O'Connell vs. BYE"
   },
   "r0-m22": {
@@ -332,7 +332,7 @@
         "seed": 15
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Seth Bradley vs. BYE"
   },
   "r0-m24": {
@@ -346,7 +346,7 @@
         "seed": 16
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: CAPT Michael Shanley vs. BYE"
   },
   "r0-m25": {
@@ -374,7 +374,7 @@
         "seed": 12
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: David Parkhurst vs. BYE"
   },
   "r0-m27": {
@@ -388,7 +388,7 @@
         "seed": 13
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Geoff Welch vs. BYE"
   },
   "r0-m28": {
@@ -416,7 +416,7 @@
         "seed": 14
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: LT Alex Egbers vs. BYE"
   },
   "r0-m30": {
@@ -444,7 +444,7 @@
         "seed": 15
       }
     ],
-    "winner": null,
+    "winner": 0,
     "label": "FIRST ROUND: Kat Hunter vs. BYE"
   },
   "r1-m0": {
