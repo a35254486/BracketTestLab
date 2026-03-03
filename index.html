@@ -648,7 +648,7 @@
         document.getElementById('championOverlay').addEventListener('click', () => { document.getElementById('championOverlay').classList.remove('show'); });
         
         function fitText(selector, buffer) { const el = document.querySelector(selector); if (!el) return; const container = el.parentElement; let low = 1, high = 300, size = 300; while (low <= high) { let mid = Math.floor((low + high) / 2); el.style.fontSize = mid + 'px'; if (el.scrollWidth <= container.clientWidth - buffer) { size = mid; low = mid + 1; } else { high = mid - 1; } } el.style.fontSize = size + 'px'; }
-------------
+/*delete*/
 		function fitBracket() {
     const scrollEl = document.getElementById('bracketScroll');
     const container = document.getElementById('bracketContainer');
@@ -663,7 +663,7 @@
         updateZoom();
     }
 }
----------------
+/*delete*/
 window.addEventListener('resize', function() { fitText('h1', 25); const h1Size = parseFloat(document.querySelector('h1').style.fontSize); document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px'; fitBracket(); });
 
 		function exportBracket() {
