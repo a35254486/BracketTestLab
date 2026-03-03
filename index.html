@@ -190,7 +190,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            font-weight: 550;
+            font-weight: 500;
             font-size: 1.3rem;
         }
         .team:first-child {
@@ -414,6 +414,10 @@
 
                 // 3. Zoom to fit after a brief delay
 		        setTimeout(() => {
+				// --- Run the text-fitting logic on initial load ---
+				fitText('h1', 25);
+				const h1Size = parseFloat(document.querySelector('h1').style.fontSize);
+				document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px';
 		            const scrollEl = document.getElementById('bracketScroll');
 		            const container = document.getElementById('bracketContainer');
 		            const contentW = container.scrollWidth;
