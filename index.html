@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+f<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -525,20 +525,13 @@
                         team2 = prevMatch2.teams[prevMatch2.winner];
                     }
                 }
-
-                // 2. THIS IS THE CRITICAL FIX.
-                // A team is a placeholder IF AND ONLY IF its name is "TBD" or "BYE".
-                const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
-                const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
-
                 // 3. Build the HTML with the correct class applied.
                 matchDiv.innerHTML = `
                     <div class="match-line">
-                        <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div>
-                        <div class="team ${team2_class}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name}</div>
+                        <div class="team" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div>
+                        <div class.team" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name}</div>
                     </div>
                 `;
-
                 // --- END: CORRECTED LOGIC ---
 
                 // Apply winner/loser styles if the current match has a result.
