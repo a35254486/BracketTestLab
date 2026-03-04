@@ -1,4 +1,4 @@
-f<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -182,24 +182,17 @@ f<!DOCTYPE html>
         .match-line {
             position: relative;
         }
-		.team {
-		    background: var(--NavyBlack);
-		    color: white;
-		    border: 2px solid var(--NavyBlack);
-		    padding: 5px 5px;
-		    min-width: 200px;
-		    cursor: pointer;
-		    transition: all 0.2s ease;
-		    position: relative;
-		    font-weight: 500;
-		    font-size: 1.3rem;
-		}
-		.team.tbd {
-		    background: #FFFEF5 !important;
-		    border-color: var(--Yellow) !important;
-		    color: var(--NavyBlack) !important;
-		}
-		}
+        .team {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 5px 5px;
+            min-width: 200px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            font-weight: 500;
+            font-size: 1.3rem;
+        }
         .team:first-child {
             border-bottom: 1px solid var(--border);
             border-radius: 4px 4px 0 0;
@@ -353,16 +346,6 @@ f<!DOCTYPE html>
             color: white;
             text-transform: uppercase;
         }
-		.round1 .team:not(.winner):not(.loser),
-		.round2 .team:not(.winner):not(.loser):not(:empty),
-		.round3 .team:not(.winner):not(.loser):not(:empty),
-		.round4 .team:not(.winner):not(.loser):not(:empty),
-		.round5 .team:not(.winner):not(.loser):not(:empty),
-		.round6 .team:not(.winner):not(.loser):not(:empty) {
-		    background-color: var(--NavyBlack);
-		    color: white;
-		    border-color: var(--NavyBlack);
-		}
     </style>
 </head>
 <body>
@@ -479,69 +462,78 @@ f<!DOCTYPE html>
             attachClickHandlers();
             attachHoverHandlers();
         }
+
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
+
             const header = document.createElement('div');
             header.className = 'round-header';
             header.textContent = round.name;
             roundDiv.appendChild(header);
+
             const matchesDiv = document.createElement('div');
             matchesDiv.className = 'round-matches';
 
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
+                
                 const matchDiv = document.createElement('div');
                 matchDiv.className = 'match';
                 matchDiv.dataset.matchId = matchId;
+
+                // Get the specific match data from the pre-loaded bracketData
                 const matchData = bracketData[matchId];
-                if (!matchData) { continue; }
+                if (!matchData) {
+                    console.warn(`Data for match ${matchId} not found.`);
+                    continue; // Skip if match data is missing
+                }
 
-                // --- START: CORRECTED LOGIC ---
+                // *** THIS IS THE CORE FIX ***
+                // Instead of just taking the names, we now check if we need to
+                // populate them from a previous round's winner.
+                let team1 = matchData.teams[0];
+                let team2 = matchData.teams[1];
 
-                // 1. Establish the teams for this match.
-                let team1, team2;
-
-                if (roundIndex === 0) {
-                    // For the first round, teams come directly from the JSON.
-                    team1 = matchData.teams[0];
-                    team2 = matchData.teams[1];
-                } else {
-                    // For later rounds, start with placeholders...
-                    team1 = { name: 'TBD', seed: null };
-                    team2 = { name: 'TBD', seed: null };
-
-                    // ...and then check the previous round for winners to advance.
+                // For any round AFTER the first, we check for winners.
+                if (roundIndex > 0) {
+                    // Find the two matches from the PREVIOUS round that feed into this one.
                     const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
                     const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
+
                     const prevMatch1 = bracketData[prevMatchId1];
                     const prevMatch2 = bracketData[prevMatchId2];
 
+                    // If the first previous match has a winner, that winner becomes team1 here.
                     if (prevMatch1 && prevMatch1.winner !== null) {
                         team1 = prevMatch1.teams[prevMatch1.winner];
                     }
+
+                    // If the second previous match has a winner, that winner becomes team2 here.
                     if (prevMatch2 && prevMatch2.winner !== null) {
                         team2 = prevMatch2.teams[prevMatch2.winner];
                     }
                 }
-                // 3. Build the HTML with the correct class applied.
+
+                // Build the HTML for the two teams in the match using the potentially updated team info.
                 matchDiv.innerHTML = `
                     <div class="match-line">
-                        <div class="team" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div>
-                        <div class.team" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name}</div>
+                        <div class="team" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
+                        <div class="team" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
                     </div>
                 `;
-                // --- END: CORRECTED LOGIC ---
 
-                // Apply winner/loser styles if the current match has a result.
+                // Now, check if the CURRENT match has a winner and apply styling.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
                     const loserIndex = winnerIndex === 0 ? 1 : 0;
+                    
                     if (teamsInMatch[winnerIndex]) teamsInMatch[winnerIndex].classList.add('winner');
                     if (teamsInMatch[loserIndex]) teamsInMatch[loserIndex].classList.add('loser');
                 }
+                
                 matchesDiv.appendChild(matchDiv);
             }
             roundDiv.appendChild(matchesDiv);
