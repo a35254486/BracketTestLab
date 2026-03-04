@@ -352,6 +352,16 @@
             color: white;
             text-transform: uppercase;
         }
+		.round1 .team:not(.winner):not(.loser),
+		.round2 .team:not(.winner):not(.loser):not(:empty),
+		.round3 .team:not(.winner):not(.loser):not(:empty),
+		.round4 .team:not(.winner):not(.loser):not(:empty),
+		.round5 .team:not(.winner):not(.loser):not(:empty),
+		.round6 .team:not(.winner):not(.loser):not(:empty) {
+		    background-color: var(--NavyBlack);
+		    color: white;
+		    border-color: var(--NavyBlack);
+		}
     </style>
 </head>
 <body>
