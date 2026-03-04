@@ -194,7 +194,7 @@
             font-size: 1.3rem;
         }
 		.team.tbd {
-		    background: #FFFEF5 !important;
+		    background: white !important;
 		    border-color: var(--Yellow) !important;
 		    color: var(--NavyBlack) !important;
 		}
@@ -477,6 +477,7 @@
             roundDiv.appendChild(header);
             const matchesDiv = document.createElement('div');
             matchesDiv.className = 'round-matches';
+
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
@@ -486,29 +487,47 @@
                 const matchData = bracketData[matchId];
                 if (!matchData) { continue; }
 
-                let team1 = matchData.teams[0];
-                let team2 = matchData.teams[1];
+                // --- START: SIMPLIFIED AND CORRECTED LOGIC ---
 
-                if (roundIndex > 0) {
+                // 1. Establish defaults for the two teams in this match.
+                let team1 = { name: 'TBD', seed: null };
+                let team2 = { name: 'TBD', seed: null };
+
+                // 2. For Round 1, use the data directly from the JSON file.
+                if (roundIndex === 0) {
+                    team1 = matchData.teams[0];
+                    team2 = matchData.teams[1];
+                } 
+                // For all other rounds, calculate who should be here based on previous winners.
+                else {
                     const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
                     const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
                     const prevMatch1 = bracketData[prevMatchId1];
                     const prevMatch2 = bracketData[prevMatchId2];
-                    if (prevMatch1 && prevMatch1.winner !== null) { team1 = prevMatch1.teams[prevMatch1.winner]; }
-                    if (prevMatch2 && prevMatch2.winner !== null) { team2 = prevMatch2.teams[prevMatch2.winner]; }
+
+                    if (prevMatch1 && prevMatch1.winner !== null) {
+                        team1 = prevMatch1.teams[prevMatch1.winner];
+                    }
+                    if (prevMatch2 && prevMatch2.winner !== null) {
+                        team2 = prevMatch2.teams[prevMatch2.winner];
+                    }
                 }
 
-                // Add a '.tbd' class if the team name is 'TBD'
-                const team1_class = (team1.name === 'TBD') ? 'tbd' : '';
-                const team2_class = (team2.name === 'TBD') ? 'tbd' : '';
+                // 3. Now, with the final correct team objects, determine their class.
+                const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
+                const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
 
+                // 4. Build the HTML.
                 matchDiv.innerHTML = `
                     <div class="match-line">
-                        <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
-                        <div class="team ${team2_class}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
+                        <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div>
+                        <div class="team ${team2_class}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name}</div>
                     </div>
                 `;
 
+                // --- END: SIMPLIFIED AND CORRECTED LOGIC ---
+
+                // Apply winner/loser styling to the current match if applicable.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
@@ -521,6 +540,7 @@
             roundDiv.appendChild(matchesDiv);
             return roundDiv;
         }
+
         // --- All functions below this line remain the same ---
         function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
         function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
