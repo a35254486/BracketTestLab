@@ -471,15 +471,12 @@
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
-
             const header = document.createElement('div');
             header.className = 'round-header';
             header.textContent = round.name;
             roundDiv.appendChild(header);
-
             const matchesDiv = document.createElement('div');
             matchesDiv.className = 'round-matches';
-
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
@@ -487,56 +484,43 @@
                 const matchDiv = document.createElement('div');
                 matchDiv.className = 'match';
                 matchDiv.dataset.matchId = matchId;
-
-                // Get the specific match data from the pre-loaded bracketData
                 const matchData = bracketData[matchId];
                 if (!matchData) {
                     console.warn(`Data for match ${matchId} not found.`);
-                    continue; // Skip if match data is missing
+                    continue; 
                 }
 
-                // *** THIS IS THE CORE FIX ***
-                // Instead of just taking the names, we now check if we need to
-                // populate them from a previous round's winner.
+                // --- START: CORRECTED LOGIC ---
+
+                // 1. Get the teams from the JSON data first.
                 let team1 = matchData.teams[0];
                 let team2 = matchData.teams[1];
-                let team1_class = team1.name && team1.name !== 'TBD' ? 'populated' : '';
-                let team2_class = team2.name && team2.name !== 'TBD' ? 'populated' : '';
 
-                // For any round AFTER the first, we re-check
-                if (roundIndex > 0) {
-                    // ... (rest of the if block is the same)
-                    if (prevMatch1 && prevMatch1.winner !== null) {
-                        team1 = prevMatch1.teams[prevMatch1.winner];
-                        team1_class = 'populated'; // It's a winner, so it's populated
-                    }
-                    if (prevMatch2 && prevMatch2.winner !== null) {
-                        team2 = prevMatch2.teams[prevMatch2.winner];
-                        team2_class = 'populated'; // It's a winner, so it's populated
-                    }
-                }
+                // 2. Set a default class for each team. It's 'populated' if the name isn't 'TBD'.
+                let team1_class = (team1 && team1.name !== 'TBD') ? 'populated' : '';
+                let team2_class = (team2 && team2.name !== 'TBD') ? 'populated' : '';
 
-                // For any round AFTER the first, we check for winners.
+                // 3. For any round AFTER the first, check if we need to advance winners.
                 if (roundIndex > 0) {
-                    // Find the two matches from the PREVIOUS round that feed into this one.
+                    // This is where prevMatch1 is correctly defined.
                     const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
                     const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
-
                     const prevMatch1 = bracketData[prevMatchId1];
                     const prevMatch2 = bracketData[prevMatchId2];
 
-                    // If the first previous match has a winner, that winner becomes team1 here.
+                    // If a winner exists from the previous round, UPDATE team1 and its class.
                     if (prevMatch1 && prevMatch1.winner !== null) {
                         team1 = prevMatch1.teams[prevMatch1.winner];
+                        team1_class = 'populated'; // An advanced winner is always populated.
                     }
-
-                    // If the second previous match has a winner, that winner becomes team2 here.
+                    // Do the same for team2.
                     if (prevMatch2 && prevMatch2.winner !== null) {
                         team2 = prevMatch2.teams[prevMatch2.winner];
+                        team2_class = 'populated'; // An advanced winner is always populated.
                     }
                 }
-
-                // Build the HTML for the two teams in the match using the potentially updated team info.
+                
+                // 4. Build the HTML using the final, correct team data and classes.
                 matchDiv.innerHTML = `
                     <div class="match-line">
                         <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
@@ -544,7 +528,9 @@
                     </div>
                 `;
 
-                // Now, check if the CURRENT match has a winner and apply styling.
+                // --- END: CORRECTED LOGIC ---
+
+                // Now, apply winner/loser styles to the CURRENT match if it has a result.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
@@ -559,6 +545,7 @@
             roundDiv.appendChild(matchesDiv);
             return roundDiv;
         }
+
         // --- All functions below this line remain the same ---
         function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
         function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
