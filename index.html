@@ -183,7 +183,7 @@
             position: relative;
         }
         .team {
-            background: white;
+            background: var(--NavyBlack);
             border: 2px solid var(--border);
             padding: 5px 5px;
             min-width: 200px;
@@ -193,6 +193,11 @@
             font-weight: 500;
             font-size: 1.3rem;
         }
+		.team.tbd {
+		    background: #FFFEF5 !important;
+		    border-color: var(--Yellow) !important;
+		    color: var(--NavyBlack) !important;
+		}
         .team:first-child {
             border-bottom: 1px solid var(--border);
             border-radius: 4px 4px 0 0;
@@ -223,11 +228,6 @@
             border-color: var(--Yellow);
             font-weight: 700;
         }
-		.bracket .team.populated:not(.winner):not(.loser) {
-		    background-color: var(--NavyBlack) !important;
-		    color: white !important;
-		    border-color: var(--NavyBlack) !important;
-		}
         .seed {
             display: none;
         }
@@ -480,47 +480,28 @@
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
-                
                 const matchDiv = document.createElement('div');
                 matchDiv.className = 'match';
                 matchDiv.dataset.matchId = matchId;
                 const matchData = bracketData[matchId];
-                if (!matchData) {
-                    console.warn(`Data for match ${matchId} not found.`);
-                    continue; 
-                }
+                if (!matchData) { continue; }
 
-                // --- START: CORRECTED LOGIC ---
-
-                // 1. Get the teams from the JSON data first.
                 let team1 = matchData.teams[0];
                 let team2 = matchData.teams[1];
 
-                // 2. Set a default class for each team. It's 'populated' if the name isn't 'TBD'.
-                let team1_class = (team1 && team1.name !== 'TBD') ? 'populated' : '';
-                let team2_class = (team2 && team2.name !== 'TBD') ? 'populated' : '';
-
-                // 3. For any round AFTER the first, check if we need to advance winners.
                 if (roundIndex > 0) {
-                    // This is where prevMatch1 is correctly defined.
                     const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
                     const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
                     const prevMatch1 = bracketData[prevMatchId1];
                     const prevMatch2 = bracketData[prevMatchId2];
-
-                    // If a winner exists from the previous round, UPDATE team1 and its class.
-                    if (prevMatch1 && prevMatch1.winner !== null) {
-                        team1 = prevMatch1.teams[prevMatch1.winner];
-                        team1_class = 'populated'; // An advanced winner is always populated.
-                    }
-                    // Do the same for team2.
-                    if (prevMatch2 && prevMatch2.winner !== null) {
-                        team2 = prevMatch2.teams[prevMatch2.winner];
-                        team2_class = 'populated'; // An advanced winner is always populated.
-                    }
+                    if (prevMatch1 && prevMatch1.winner !== null) { team1 = prevMatch1.teams[prevMatch1.winner]; }
+                    if (prevMatch2 && prevMatch2.winner !== null) { team2 = prevMatch2.teams[prevMatch2.winner]; }
                 }
-                
-                // 4. Build the HTML using the final, correct team data and classes.
+
+                // Add a '.tbd' class if the team name is 'TBD'
+                const team1_class = (team1.name === 'TBD') ? 'tbd' : '';
+                const team2_class = (team2.name === 'TBD') ? 'tbd' : '';
+
                 matchDiv.innerHTML = `
                     <div class="match-line">
                         <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
@@ -528,24 +509,18 @@
                     </div>
                 `;
 
-                // --- END: CORRECTED LOGIC ---
-
-                // Now, apply winner/loser styles to the CURRENT match if it has a result.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
                     const loserIndex = winnerIndex === 0 ? 1 : 0;
-                    
                     if (teamsInMatch[winnerIndex]) teamsInMatch[winnerIndex].classList.add('winner');
                     if (teamsInMatch[loserIndex]) teamsInMatch[loserIndex].classList.add('loser');
                 }
-                
                 matchesDiv.appendChild(matchDiv);
             }
             roundDiv.appendChild(matchesDiv);
             return roundDiv;
         }
-
         // --- All functions below this line remain the same ---
         function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
         function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
