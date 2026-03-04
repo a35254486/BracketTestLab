@@ -479,7 +479,6 @@
             attachClickHandlers();
             attachHoverHandlers();
         }
-
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
@@ -499,21 +498,21 @@
                 const matchData = bracketData[matchId];
                 if (!matchData) { continue; }
 
-                // --- START: CORRECT LOGIC ---
+                // --- START: CORRECTED LOGIC ---
 
-                // 1. Establish the teams that are SUPPOSED to be in this match.
+                // 1. Establish the teams for this match.
                 let team1, team2;
 
                 if (roundIndex === 0) {
-                    // For the first round, the teams are from the JSON data.
+                    // For the first round, teams come directly from the JSON.
                     team1 = matchData.teams[0];
                     team2 = matchData.teams[1];
                 } else {
-                    // For later rounds, we start with placeholders.
+                    // For later rounds, start with placeholders...
                     team1 = { name: 'TBD', seed: null };
                     team2 = { name: 'TBD', seed: null };
 
-                    // And then we check the PREVIOUS round to see if a winner should be here instead.
+                    // ...and then check the previous round for winners to advance.
                     const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
                     const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
                     const prevMatch1 = bracketData[prevMatchId1];
@@ -527,11 +526,12 @@
                     }
                 }
 
-                // 2. With the definitive teams decided, assign a class ONLY if they are placeholders.
+                // 2. THIS IS THE CRITICAL FIX.
+                // A team is a placeholder IF AND ONLY IF its name is "TBD" or "BYE".
                 const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
                 const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
 
-                // 3. Build the HTML with the correct class.
+                // 3. Build the HTML with the correct class applied.
                 matchDiv.innerHTML = `
                     <div class="match-line">
                         <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div>
@@ -539,8 +539,9 @@
                     </div>
                 `;
 
-                // --- END: CORRECT LOGIC ---
+                // --- END: CORRECTED LOGIC ---
 
+                // Apply winner/loser styles if the current match has a result.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
