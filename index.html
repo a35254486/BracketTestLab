@@ -183,9 +183,9 @@
             position: relative;
         }
 		.team {
-		    background: #FFFEF5; /* The off-white TBD background */
-		    border: 2px solid var(--Yellow); /* The yellow TBD border */
-		    color: var(--NavyBlack); /* The dark text for TBD */
+		    background: var(--NavyBlack);
+		    color: white;
+		    border: 2px solid var(--NavyBlack);
 		    padding: 5px 5px;
 		    min-width: 200px;
 		    cursor: pointer;
@@ -195,9 +195,10 @@
 		    font-size: 1.3rem;
 		}
 		.team.tbd {
-		    background: white !important;
+		    background: #FFFEF5 !important;
 		    border-color: var(--Yellow) !important;
 		    color: var(--NavyBlack) !important;
+		}
 		}
         .team:first-child {
             border-bottom: 1px solid var(--border);
@@ -498,19 +499,21 @@
                 const matchData = bracketData[matchId];
                 if (!matchData) { continue; }
 
-                // --- START: SIMPLIFIED AND CORRECTED LOGIC ---
+                // --- START: CORRECT LOGIC ---
 
-                // 1. Establish defaults for the two teams in this match.
-                let team1 = { name: 'TBD', seed: null };
-                let team2 = { name: 'TBD', seed: null };
+                // 1. Establish the teams that are SUPPOSED to be in this match.
+                let team1, team2;
 
-                // 2. For Round 1, use the data directly from the JSON file.
                 if (roundIndex === 0) {
+                    // For the first round, the teams are from the JSON data.
                     team1 = matchData.teams[0];
                     team2 = matchData.teams[1];
-                } 
-                // For all other rounds, calculate who should be here based on previous winners.
-                else {
+                } else {
+                    // For later rounds, we start with placeholders.
+                    team1 = { name: 'TBD', seed: null };
+                    team2 = { name: 'TBD', seed: null };
+
+                    // And then we check the PREVIOUS round to see if a winner should be here instead.
                     const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
                     const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
                     const prevMatch1 = bracketData[prevMatchId1];
@@ -524,11 +527,11 @@
                     }
                 }
 
-                // 3. Now, with the final correct team objects, determine their class.
+                // 2. With the definitive teams decided, assign a class ONLY if they are placeholders.
                 const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
                 const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
 
-                // 4. Build the HTML.
+                // 3. Build the HTML with the correct class.
                 matchDiv.innerHTML = `
                     <div class="match-line">
                         <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div>
@@ -536,9 +539,8 @@
                     </div>
                 `;
 
-                // --- END: SIMPLIFIED AND CORRECTED LOGIC ---
+                // --- END: CORRECT LOGIC ---
 
-                // Apply winner/loser styling to the current match if applicable.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
                     const winnerIndex = matchData.winner;
@@ -551,7 +553,6 @@
             roundDiv.appendChild(matchesDiv);
             return roundDiv;
         }
-
         // --- All functions below this line remain the same ---
         function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
         function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
