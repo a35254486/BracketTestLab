@@ -223,6 +223,11 @@
             border-color: var(--Yellow);
             font-weight: 700;
         }
+		.team.populated:not(.winner):not(.loser) {
+		    background-color: var(--NavyBlack);
+		    color: white;
+		    border-color: var(--NavyBlack);
+		}
         .seed {
             display: none;
         }
@@ -495,6 +500,21 @@
                 // populate them from a previous round's winner.
                 let team1 = matchData.teams[0];
                 let team2 = matchData.teams[1];
+                let team1_class = team1.name && team1.name !== 'TBD' ? 'populated' : '';
+                let team2_class = team2.name && team2.name !== 'TBD' ? 'populated' : '';
+
+                // For any round AFTER the first, we re-check
+                if (roundIndex > 0) {
+                    // ... (rest of the if block is the same)
+                    if (prevMatch1 && prevMatch1.winner !== null) {
+                        team1 = prevMatch1.teams[prevMatch1.winner];
+                        team1_class = 'populated'; // It's a winner, so it's populated
+                    }
+                    if (prevMatch2 && prevMatch2.winner !== null) {
+                        team2 = prevMatch2.teams[prevMatch2.winner];
+                        team2_class = 'populated'; // It's a winner, so it's populated
+                    }
+                }
 
                 // For any round AFTER the first, we check for winners.
                 if (roundIndex > 0) {
@@ -519,8 +539,8 @@
                 // Build the HTML for the two teams in the match using the potentially updated team info.
                 matchDiv.innerHTML = `
                     <div class="match-line">
-                        <div class="team" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
-                        <div class="team" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
+                        <div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
+                        <div class="team ${team2_class}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
                     </div>
                 `;
 
