@@ -567,31 +567,39 @@ matchDiv.innerHTML = `
             container.style.zoom = zoomLevel;
         }
 
-        function selectWinner(matchId, teamIndex) {
-            const match = bracketData[matchId];
-            const selectedTeam = match.teams[teamIndex];
-            if (selectedTeam.name === 'TBD' || selectedTeam.name === 'BYE') return;
-            const isAlreadyDecided = match.winner !== null;
-            const isWinnerClicked = isAlreadyDecided && match.winner === teamIndex;
-            if (isAlreadyDecided) {
-                clearFutureMatches(matchId);
-            }
-            if (isWinnerClicked) {
-                match.winner = null;
-                const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
-                matchDiv.querySelectorAll('.team').forEach(t => t.classList.remove('winner', 'loser'));
-            } else {
-                match.winner = teamIndex;
-                const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
-                matchDiv.querySelectorAll('.team').forEach((t, idx) => {
-                    t.classList.remove('winner', 'loser');
-                    if (idx === teamIndex) t.classList.add('winner');
-                    else t.classList.add('loser');
-                });
-                advanceWinner(matchId, selectedTeam);
-            }
-        }
-
+function selectWinner(matchId, teamIndex) {
+    const match = bracketData[matchId];
+    const selectedTeam = match.teams[teamIndex];
+    if (selectedTeam.name === 'TBD' || selectedTeam.name === 'BYE') return;
+    
+    const isAlreadyDecided = match.winner !== null;
+    const isWinnerClicked = isAlreadyDecided && match.winner === teamIndex;
+    
+    // If this match already has a winner, clear all future progress first
+    if (isAlreadyDecided) {
+        clearFutureMatches(matchId);
+    }
+    
+    // If clicking the current winner, UNDO the decision
+    if (isWinnerClicked) {
+        match.winner = null;
+        const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
+        matchDiv.querySelectorAll('.team').forEach(t => {
+            t.classList.remove('winner', 'loser');
+        });
+    } 
+    // Otherwise, set new winner
+    else {
+        match.winner = teamIndex;
+        const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
+        matchDiv.querySelectorAll('.team').forEach((t, idx) => {
+            t.classList.remove('winner', 'loser');
+            if (idx === teamIndex) t.classList.add('winner');
+            else t.classList.add('loser');
+        });
+        advanceWinner(matchId, selectedTeam);
+    }
+}
 		function advanceWinner(matchId, winningTeam) {
 		    const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
 		    if (roundNum >= rounds.length - 1) {
