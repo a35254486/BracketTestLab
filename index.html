@@ -616,34 +616,43 @@ function selectWinner(matchId, teamIndex) {
 		    nextTeamDiv.classList.remove('tbd');
 		}
 
-        function clearFutureMatches(matchId) {
-            const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-            if (roundNum >= rounds.length - 1) {
-                showChampion(null);
-                return;
-            }
-            const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
-            const position = matchNum % 2;
-            if (!bracketData[nextMatchId]) return;
-            if (bracketData[nextMatchId].winner !== null) {
-                clearFutureMatches(nextMatchId);
-            }
-            bracketData[nextMatchId].teams[position] = { name: 'TBD', seed: null };
-            bracketData[nextMatchId].winner = null;
-         // Update next match UI
-			const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
-			const nextTeam = nextMatchDiv.querySelector(`[data-team="${position}"]`);
-			const seedDisplay = team.seed ? team.seed : '-';
-			nextTeam.innerHTML = `<span class="seed">${seedDisplay}</span>${team.name}`;
-			
-			// Remove tbd class - team becomes navy blue automatically
-			nextTeam.classList.remove('tbd', 'winner', 'loser');
-			
-			// Re-attach click handler
-			nextTeam.onclick = function() {
-			    selectWinner(nextMatchId, position);
-			};
-		}
+function clearFutureMatches(matchId) {
+    const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+    
+    if (roundNum >= rounds.length - 1) {
+        showChampion(null);
+        return;
+    }
+    
+    const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
+    const position = matchNum % 2;
+    
+    if (!bracketData[nextMatchId]) return;
+    
+    // If the next match has a winner, recursively clear future matches
+    if (bracketData[nextMatchId].winner !== null) {
+        clearFutureMatches(nextMatchId);
+    }
+    
+    // Reset the next match data
+    bracketData[nextMatchId].teams[position] = { name: 'TBD', seed: null };
+    bracketData[nextMatchId].winner = null;
+    
+    // Update the UI
+    const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
+    if (nextMatchDiv) {
+        const teamToClear = nextMatchDiv.querySelector(`[data-team="${position}"]`);
+        if (teamToClear) {
+            teamToClear.innerHTML = `<span class="seed">-</span>TBD`;
+            teamToClear.classList.add('tbd'); // Add tbd class to make it white
+            teamToClear.classList.remove('winner', 'loser');
+        }
+        // Clear winner/loser from both teams in next match
+        nextMatchDiv.querySelectorAll('.team').forEach(team => {
+            team.classList.remove('winner', 'loser');
+        });
+    }
+}
         function showChampion(name) {
             const overlay = document.getElementById('championOverlay');
             if (name) {
