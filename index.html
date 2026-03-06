@@ -217,7 +217,7 @@
         }
 		.team.tbd {
 		    background-color: var(--White) !important;
-		    border-color: var(--Yellow) !important;
+		    border-color: var(--NavyBlack) !important;
 		    color: var(--NavyBlack) !important;
 		    font-weight: normal !important;
 		}
@@ -523,7 +523,6 @@ if (roundIndex > 0) {
         team2 = prevMatch2.teams[prevMatch2.winner];
     }
 }
-
 // Add the 'tbd' class if the team name is 'TBD'
 const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
 const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
@@ -531,8 +530,12 @@ const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
 // Build the HTML for the two teams in the match.
 matchDiv.innerHTML = `
     <div class="match-line">
-        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}</div>
-        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}</div>
+        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0">
+            <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
+        </div>
+        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1">
+            <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
+        </div>
     </div>
 `;
 
@@ -616,15 +619,19 @@ matchDiv.innerHTML = `
             }
             bracketData[nextMatchId].teams[position] = { name: 'TBD', seed: null };
             bracketData[nextMatchId].winner = null;
-            const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
-            if (nextMatchDiv) {
-                const teamToClear = nextMatchDiv.querySelector(`[data-team="${position}"]`);
-                if (teamToClear) {
-                    teamToClear.innerHTML = `<span class="seed">-</span>TBD`;
-                }
-                nextMatchDiv.querySelectorAll('.team').forEach(team => team.classList.remove('winner', 'loser'));
-            }
-        }
+         // Update next match UI
+			const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
+			const nextTeam = nextMatchDiv.querySelector(`[data-team="${position}"]`);
+			const seedDisplay = team.seed ? team.seed : '-';
+			nextTeam.innerHTML = `<span class="seed">${seedDisplay}</span>${team.name}`;
+			
+			// Remove tbd class - team becomes navy blue automatically
+			nextTeam.classList.remove('tbd', 'winner', 'loser');
+			
+			// Re-attach click handler
+			nextTeam.onclick = function() {
+			    selectWinner(nextMatchId, position);
+			};
 
         function showChampion(name) {
             const overlay = document.getElementById('championOverlay');
