@@ -592,18 +592,21 @@ matchDiv.innerHTML = `
             }
         }
 
-        function advanceWinner(matchId, winningTeam) {
-            const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-            if (roundNum >= rounds.length - 1) {
-                showChampion(winningTeam.name);
-                return;
-            }
-            const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
-            const position = matchNum % 2;
-            bracketData[nextMatchId].teams[position] = { name: winningTeam.name, seed: winningTeam.seed };
-            const nextTeamDiv = document.querySelector(`[data-match-id="${nextMatchId}"] [data-team="${position}"]`);
-            nextTeamDiv.innerHTML = `<span class="seed">${winningTeam.seed || '-'}</span>${winningTeam.name}`;
-        }
+		function advanceWinner(matchId, winningTeam) {
+		    const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+		    if (roundNum >= rounds.length - 1) {
+		        showChampion(winningTeam.name);
+		        return;
+		    }
+		    const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
+		    const position = matchNum % 2;
+		    bracketData[nextMatchId].teams[position] = { name: winningTeam.name, seed: winningTeam.seed };
+		    const nextTeamDiv = document.querySelector(`[data-match-id="${nextMatchId}"] [data-team="${position}"]`);
+		    nextTeamDiv.innerHTML = `<span class="seed">${winningTeam.seed || '-'}</span>${winningTeam.name}`;
+		    
+		    // Remove tbd class so team becomes navy blue
+		    nextTeamDiv.classList.remove('tbd');
+		}
 
         function clearFutureMatches(matchId) {
             const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
