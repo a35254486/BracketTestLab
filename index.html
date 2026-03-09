@@ -127,7 +127,7 @@
         .bracket {
             display: flex;
             justify-content: center;
-            align-items: flex-start; 
+            align-items: stretch; 
             gap: 60px;
             min-width: auto;
         }
@@ -155,9 +155,11 @@
         }
         .round-header {
 		    position: sticky;
-		    top: 0; /* Make sure this is 0 */
+		    top: 130px; /* Make sure this is 0 */
 		    background: var(--White);
-		    z-index: 5;            font-family: "Josefin Sans", sans-serif;
+		    z-index: 5;            
+		    padding: 10px 0;
+			font-family: "Josefin Sans", sans-serif;
             font-size: 1.4rem;
             color: var(--NavyBlack);
             text-align: center;
