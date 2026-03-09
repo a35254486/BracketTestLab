@@ -161,6 +161,12 @@
             margin-bottom: 1.5rem;
             letter-spacing: 1px;
             font-style: italic;
+			   /* --- ADD THESE LINES --- */
+            position: sticky;
+            top: 0;
+            background: var(--White); /* Give it a background so content doesn't show through */
+            z-index: 5; /* Keep it on top of the bracket, but below the main header */
+            padding: 10px 0; /* Add some padding for spacing */
         }
         .round-matches {
             display: flex;
