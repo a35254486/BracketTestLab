@@ -44,7 +44,7 @@
             padding: 1rem;                 
             border-radius: 10px;     
             position: sticky; /* Stick to the top of the container */
-            top: 0; /* Position it at the very top */
+            top: -1px; /* Position it at the very top */
             z-index: 10; /* Ensure it stays above other content */
         }
         h1 {
@@ -114,6 +114,7 @@
         }
         .bracket-scroll {
             overflow: auto;
+		    contain: paint; /* Add this line */
             padding: 0rem 0;
             position: relative;
         }
@@ -153,7 +154,10 @@
             justify-content: space-around;
         }
         .round-header {
-            font-family: "Josefin Sans", sans-serif;
+		    position: sticky;
+		    top: 0; /* Make sure this is 0 */
+		    background: var(--White);
+		    z-index: 5;            font-family: "Josefin Sans", sans-serif;
             font-size: 1.4rem;
             color: var(--NavyBlack);
             text-align: center;
