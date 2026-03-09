@@ -12,8 +12,8 @@
             --Yellow: #E8B00F;
             --White: #FFFFFF;
             --light-gray: #F5F5F5;
-            --border: #575757;
-			--loser: #bbbbbb
+            --border: #bbbbbb;
+			--loser: #B5B5B5
         }
         * {
             margin: 0;
@@ -42,10 +42,7 @@
             background-color: var(--NavyBlack);
             border: 4px solid var(--Yellow); 
             padding: 1rem;                 
-            border-radius: 10px;     
-            position: sticky; /* Stick to the top of the container */
-            top: -1px; /* Position it at the very top */
-            z-index: 10; /* Ensure it stays above other content */
+            border-radius: 10px;              
         }
         h1 {
             font-family: "Josefin Sans", sans-serif;
@@ -93,7 +90,7 @@
         }
         .btn-NavyBlack:hover {
             background: #005266;
-            /*transform: translateY(-2px);*/
+            transform: translateY(-2px);
         }
         .btn-secondary {
             background: var(--Yellow);
@@ -101,7 +98,7 @@
         }
         .btn-secondary:hover {
             background: #D4A20D;
-            /*transform: translateY(-2px);*/
+            transform: translateY(-2px);
         }
         .btn-Yellow {
             background: white;
@@ -113,21 +110,20 @@
             color: white;
         }
         .bracket-scroll {
-/*            overflow: auto;*/
-		    contain: paint; /* Add this line */
+            overflow: auto;
             padding: 0rem 0;
             position: relative;
         }
         .bracket-container {
             transform-origin: top center;
-/*            transition: transform 0.2s ease;*/
+            transition: transform 0.2s ease;
             display: inline-block;
             min-width: max-content;
         }
         .bracket {
             display: flex;
             justify-content: center;
-            align-items: stretch; 
+            align-items: flex-start; 
             gap: 60px;
             min-width: auto;
         }
@@ -154,12 +150,7 @@
             justify-content: space-around;
         }
         .round-header {
-		    position: sticky;
-		    top: 130px; /* Make sure this is 0 */
-		    background: var(--White);
-		    z-index: 5;            
-		    padding: 10px 0;
-			font-family: "Josefin Sans", sans-serif;
+            font-family: "Josefin Sans", sans-serif;
             font-size: 1.4rem;
             color: var(--NavyBlack);
             text-align: center;
@@ -167,12 +158,6 @@
             margin-bottom: 1.5rem;
             letter-spacing: 1px;
             font-style: italic;
-			   /* --- ADD THESE LINES --- */
-            position: sticky;
-            top: 0;
-            background: var(--White); /* Give it a background so content doesn't show through */
-            z-index: 5; /* Keep it on top of the bracket, but below the main header */
-            padding: 10px 0; /* Add some padding for spacing */
         }
         .round-matches {
             display: flex;
@@ -209,20 +194,21 @@
         .team:hover {
             border-color: var(--Yellow);
             background: #FFFEF5;
-            /*transform: translateX(3px);*/
+            transform: translateX(3px);
         }
         .team.winner {
             background: var(--NavyBlack);
             color: white;
             border-color: var(--NavyBlack);
-            font-weight: 550;
+            font-weight: 515;
         }
         .team.loser {
             background: var(--loser);
-            color: #5c5c5c;
+            color: #7d7d7d;
             opacity: 0.6;
-            border: 2px solid var(--border);
-			        }
+            border-color: var(--border);
+
+        }
         .team.highlighted {
             background: var(--Yellow);
             color: var(--NavyBlack);
@@ -290,8 +276,8 @@
         .bracket-half.right .match::after { left: auto; right: 100%; }
         .bracket-half.right .match:nth-child(odd)::before,
         .bracket-half.right .match:nth-child(even)::before { left: auto; right: calc(100% + 30px); }
-/*        .bracket-half.left .team:hover { transform: translateX(3px); }
-        .bracket-half.right .team:hover { transform: translateX(-3px); }*/
+        .bracket-half.left .team:hover { transform: translateX(3px); }
+        .bracket-half.right .team:hover { transform: translateX(-3px); }
         .bracket-half.left .round-header { text-align: right; }
         .bracket-half.right .round-header { text-align: left; }
         .bracket-scroll { overscroll-behavior-inline: contain; scroll-padding-inline: 24px; }
@@ -459,13 +445,11 @@
 		            }
 		            updateZoom();
 		        }, 222); 
-                
-            } catch (error) {
+                            } catch (error) {
                 console.error("Error loading bracket:", error);
                 document.getElementById('bracket').innerHTML = `<p style="color: red; text-align: center;">${error.message}</p>`;
             }
         }
-        
         function initializeBracket() {
             const bracket = document.getElementById('bracket');
             bracket.innerHTML = '';
@@ -493,7 +477,6 @@
             attachClickHandlers();
             attachHoverHandlers();
         }
-
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
@@ -520,12 +503,10 @@
                     console.warn(`Data for match ${matchId} not found.`);
                     continue; // Skip if match data is missing
                 }
-
                 // *** THIS IS THE CORE FIX ***
                 // Instead of just taking the names, we now check if we need to
                 // populate them from a previous round's winner.
 // ... (inside the createRound function, within the for loop)
-
 // Get the potentially updated team info.
 let team1 = matchData.teams[0];
 let team2 = matchData.teams[1];
@@ -546,7 +527,6 @@ if (roundIndex > 0) {
 // Add the 'tbd' class if the team name is 'TBD'
 const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
 const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
-
 // Build the HTML for the two teams in the match.
 matchDiv.innerHTML = `
     <div class="match-line">
@@ -558,9 +538,7 @@ matchDiv.innerHTML = `
         </div>
     </div>
 `;
-
 // ... (the rest of the function continues as before)
-
                 // Now, check if the CURRENT match has a winner and apply styling.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
@@ -569,8 +547,7 @@ matchDiv.innerHTML = `
                     
                     if (teamsInMatch[winnerIndex]) teamsInMatch[winnerIndex].classList.add('winner');
                     if (teamsInMatch[loserIndex]) teamsInMatch[loserIndex].classList.add('loser');
-                }
-                
+                }                
                 matchesDiv.appendChild(matchDiv);
             }
             roundDiv.appendChild(matchesDiv);
@@ -586,7 +563,6 @@ matchDiv.innerHTML = `
             const container = document.getElementById('bracketContainer');
             container.style.zoom = zoomLevel;
         }
-
 function selectWinner(matchId, teamIndex) {
     const match = bracketData[matchId];
     const selectedTeam = match.teams[teamIndex];
@@ -599,7 +575,6 @@ function selectWinner(matchId, teamIndex) {
     if (isAlreadyDecided) {
         clearFutureMatches(matchId);
     }
-    
     // If clicking the current winner, UNDO the decision
     if (isWinnerClicked) {
         match.winner = null;
@@ -643,7 +618,7 @@ function clearFutureMatches(matchId) {
         showChampion(null);
         return;
     }
-    
+	
     const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
     const position = matchNum % 2;
     
@@ -653,11 +628,9 @@ function clearFutureMatches(matchId) {
     if (bracketData[nextMatchId].winner !== null) {
         clearFutureMatches(nextMatchId);
     }
-    
     // Reset the next match data
     bracketData[nextMatchId].teams[position] = { name: 'TBD', seed: null };
-    bracketData[nextMatchId].winner = null;
-    
+    bracketData[nextMatchId].winner = null;   
     // Update the UI
     const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
     if (nextMatchDiv) {
@@ -688,7 +661,6 @@ function clearFutureMatches(matchId) {
             document.getElementById('championOverlay').classList.remove('show');
             loadAndInitialize();
         }
-
 			window.addEventListener('load', () => {
 		    loadAndInitialize();
 		    fitBracket();
@@ -709,8 +681,7 @@ window.addEventListener('resize', function() {
 
           if (contentW > viewW) {
               newZoomLevel = (viewW - 10) / contentW;
-          }
-          
+          }     
           zoomLevel = newZoomLevel;
           updateZoom(); // Apply the new zoom level
           // --- END OF SURGICAL UPDATE ---
@@ -718,7 +689,6 @@ window.addEventListener('resize', function() {
 		function exportBracket() {
             // Create a deep copy of the data to avoid modifying the live bracket
             const dataToExport = JSON.parse(JSON.stringify(bracketData));
-
             // Loop through all rounds and matches in our new export object
             for (const matchId in dataToExport) {
                 const match = dataToExport[matchId];
@@ -726,7 +696,6 @@ window.addEventListener('resize', function() {
                 
                 const roundName = rounds[roundNum] ? rounds[roundNum].name : 'UNKNOWN ROUND';
                 let label = `${roundName}: `;
-
                 // For the first round, the label is simple: Team 1 vs Team 2
                 if (roundNum === 0) {
                     const team1Name = match.teams[0] ? match.teams[0].name : 'TBD';
@@ -749,7 +718,6 @@ window.addEventListener('resize', function() {
                 // Add the new human-readable label to the match object
                 match.label = label;
             }
-
             // Convert the enhanced object to JSON and trigger the download
             const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
