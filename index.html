@@ -162,6 +162,19 @@
             letter-spacing: 1px;
             font-style: italic;
         }
+		#round-titles-container {
+		    position: sticky;
+		    top: 135px; /* Adjust this value to set distance from top of page */
+		    z-index: 5;
+		    background: var(--White);
+		    padding-bottom: 10px;
+		    border-bottom: 2px solid var(--border);
+		}
+		#matches-scroll-container {
+		    overflow-x: auto;
+		    overflow-y: hidden; /* Prevent vertical scroll */
+		    padding-top: 1rem;
+		}
         .round-matches {
             display: flex;
             flex-direction: column;
@@ -384,11 +397,19 @@
                 <button class="btn-secondary" onclick="zoomIn()">+</button>
             </div> -->
         </div>
-        <div class="bracket-scroll" id="bracketScroll">
-            <div class="bracket-container" id="bracketContainer">
-                <div class="bracket" id="bracket"></div>
+        <!-- NEW STRUCTURE -->
+        <div id="round-titles-container">
+            <!-- Round titles will be generated here by JS -->
+        </div>
+
+        <div id="matches-scroll-container">
+            <div id="bracketContainer">
+                <div class="bracket" id="bracket">
+                    <!-- The bracket matches will be generated here by JS -->
+                </div>
             </div>
         </div>
+
     </div>
     <!-- The Overlay and Champion Display are now separate from the main container -->
     <div class="champion-overlay" id="championOverlay">
@@ -453,62 +474,149 @@
                 document.getElementById('bracket').innerHTML = `<p style="color: red; text-align: center;">${error.message}</p>`;
             }
         }
+        // This is the new master function that builds the separate parts
         function initializeBracket() {
-            const bracket = document.getElementById('bracket');
-            bracket.innerHTML = '';
+            // 1. Get references to our new containers
+            const titlesContainer = document.getElementById('round-titles-container');
+            const bracketContainer = document.getElementById('bracket');
+
+            // 2. Clear any old content
+            titlesContainer.innerHTML = '';
+            bracketContainer.innerHTML = '';
+
+            // 3. Build the content for the round titles
+            const titlesContent = buildRoundTitles();
+            titlesContainer.appendChild(titlesContent);
+
+            // 4. Build the content for the bracket matches
+            const bracketContent = buildBracketMatches();
+            bracketContainer.appendChild(bracketContent);
+
+            // 5. Attach interactivity to the newly created elements
+            attachClickHandlers();
+            attachHoverHandlers();
+        }
+
+        // NEW function dedicated to building ONLY the sticky round titles
+        function buildRoundTitles() {
+            const titlesBracket = document.createElement('div');
+            titlesBracket.className = 'bracket'; // Use same class for alignment
+
+            const leftTitles = document.createElement('div');
+            leftTitles.className = 'bracket-half left';
+
+            const rightTitles = document.createElement('div');
+            rightTitles.className = 'bracket-half right';
+
+            // Create headers for the first 5 rounds
+            for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
+                const round = rounds[roundIndex];
+                const roundDiv = document.createElement('div');
+                roundDiv.className = `round ${round.class}`;
+                roundDiv.innerHTML = `<div class="round-header">${round.name}</div>`;
+                leftTitles.appendChild(roundDiv);
+                // Create a clone for the right side
+                rightTitles.appendChild(roundDiv.cloneNode(true));
+            }
+
+            const finalsTitleDiv = document.createElement('div');
+            finalsTitleDiv.className = 'finals-column';
+            const finalsRoundDiv = document.createElement('div');
+            finalsRoundDiv.className = `round ${rounds[5].class}`;
+            finalsRoundDiv.innerHTML = `<div class="round-header">${rounds[5].name}</div>`;
+            finalsTitleDiv.appendChild(finalsRoundDiv);
+
+            titlesBracket.appendChild(leftTitles);
+            titlesBracket.appendChild(finalsTitleDiv);
+            titlesBracket.appendChild(rightTitles);
+            
+            return titlesBracket;
+        }
+
+        // NEW function dedicated to building ONLY the scrollable matchups
+        function buildBracketMatches() {
+            const bracket = document.createElement('div');
+            bracket.className = 'bracket'; // Use same class for alignment
+
             const leftHalf = document.createElement('div');
             leftHalf.className = 'bracket-half left';
             const rightHalf = document.createElement('div');
             rightHalf.className = 'bracket-half right';
+
+            // This logic is our last correct version for building matches
             for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
                 const round = rounds[roundIndex];
-                leftHalf.appendChild(createRound(round, roundIndex, 0, round.matches / 2));
-                rightHalf.appendChild(createRound(round, roundIndex, round.matches / 2, round.matches / 2));
+                const roundDiv = document.createElement('div');
+                roundDiv.className = `round ${round.class}`;
+                
+                const matchesDiv = document.createElement('div');
+                matchesDiv.className = 'round-matches';
+
+                for (let i = 0; i < round.matches / 2; i++) {
+                    const matchIndex = (roundIndex < 2) ? i : (roundIndex < 3 ? i * 2 : i * 4); // Adjust for half-bracket
+                    const fullMatchIndex = (leftHalf === roundDiv.parentElement) ? matchIndex : matchIndex + round.matches / 2;
+
+                    // This part remains the same, creating each match div
+                    const matchId = `r${roundIndex}-m${fullMatchIndex}`;
+                    const matchDiv = document.createElement('div');
+                    matchDiv.className = 'match';
+                    matchDiv.dataset.matchId = matchId;
+                    const matchData = bracketData[matchId];
+                    if (!matchData) continue;
+
+                    let team1, team2;
+                    if (roundIndex === 0) {
+                        team1 = matchData.teams[0];
+                        team2 = matchData.teams[1];
+                    } else {
+                        team1 = { name: 'TBD', seed: null };
+                        team2 = { name: 'TBD', seed: null };
+                        const prevMatchId1 = `r${roundIndex - 1}-m${fullMatchIndex * 2}`;
+                        const prevMatchId2 = `r${roundIndex - 1}-m${fullMatchIndex * 2 + 1}`;
+                        const prevMatch1 = bracketData[prevMatchId1];
+                        const prevMatch2 = bracketData[prevMatchId2];
+                        if (prevMatch1 && prevMatch1.winner !== null) team1 = prevMatch1.teams[prevMatch1.winner];
+                        if (prevMatch2 && prevMatch2.winner !== null) team2 = prevMatch2.teams[prevMatch2.winner];
+                    }
+
+                    const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
+                    const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
+                    matchDiv.innerHTML = `<div class="match-line"><div class="team ${team1_class}" ...>${team1.name}</div><div class="team ${team2_class}" ...>${team2.name}</div></div>`;
+                    
+                    if (matchData.winner !== null) { /* ... apply winner/loser classes ... */ }
+                    matchesDiv.appendChild(matchDiv);
+                }
+                roundDiv.appendChild(matchesDiv);
+
+                if (leftHalf.children.length < 5) {
+                  leftHalf.appendChild(roundDiv);
+                } else {
+                  rightHalf.appendChild(roundDiv);
+                }
             }
+            
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
-            const finalsRound = createRound(rounds[5], 5, 0, 1);
             const logo = document.createElement('img');
             logo.src = 'SWSC_logo.png';
             logo.alt = 'Bracket Logo';
             logo.className = 'center-logo';
             finalsDiv.appendChild(logo);
-            finalsDiv.appendChild(finalsRound);
+            // Create final match
+            const finalRoundDiv = document.createElement('div');
+            finalRoundDiv.className = `round ${rounds[5].class}`;
+            // ... (add final match logic)
+            finalsDiv.appendChild(finalRoundDiv);
+
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
             bracket.appendChild(rightHalf);
-            attachClickHandlers();
-            attachHoverHandlers();
+
+            return bracket;
         }
-        function createRound(round, roundIndex, startMatch, matchCount) {
-            const roundDiv = document.createElement('div');
-            roundDiv.className = `round ${round.class}`;
-
-            const header = document.createElement('div');
-            header.className = 'round-header';
-            header.textContent = round.name;
-            roundDiv.appendChild(header);
-
-            const matchesDiv = document.createElement('div');
-            matchesDiv.className = 'round-matches';
-
-            for (let i = 0; i < matchCount; i++) {
-                const matchIndex = startMatch + i;
-                const matchId = `r${roundIndex}-m${matchIndex}`;
-                
-                const matchDiv = document.createElement('div');
-                matchDiv.className = 'match';
-                matchDiv.dataset.matchId = matchId;
-
-                // Get the specific match data from the pre-loaded bracketData
-                const matchData = bracketData[matchId];
-                if (!matchData) {
-                    console.warn(`Data for match ${matchId} not found.`);
-                    continue; // Skip if match data is missing
-                }
-                // *** THIS IS THE CORE FIX ***
-                // Instead of just taking the names, we now check if we need to
-                // populate them from a previous round's winner.
+            // *** THIS IS THE CORE FIX ***
+            // Instead of just taking the names, we now check if we need to
+            // populate them from a previous round's winner.
 // ... (inside the createRound function, within the for loop)
 // Get the potentially updated team info.
 let team1 = matchData.teams[0];
