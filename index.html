@@ -270,4 +270,321 @@
     <div id="player"></div>
     <div class="container">
         <header>
-            <h1>Rules of the Road 
+            <h1>Rules of the Road March Madness </h1>
+            <p class="subtitle">Who rules the Rules?</p>
+        </header>
+
+        <div class="controls">
+            <button id="exportBtn" class="btn-Yellow" onclick="exportBracket()" style="display: none;">Export Updated Data</button>
+        </div>
+
+        <!-- NEW STICKY & SCROLL STRUCTURE -->
+        <div id="round-titles-container">
+            <!-- Round titles will be generated here by JS -->
+        </div>
+
+        <div id="matches-scroll-container">
+            <div class="bracket-container" id="bracketContainer">
+                <div class="bracket" id="bracket">
+                    <!-- The bracket matches will be generated here by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="champion-overlay" id="championOverlay">
+        <div class="champion-display" id="championDisplay">
+            <h2> N72 RULES OF THE ROAD CHAMPION </h2>
+            <div class="champion-name" id="championName"></div>
+        </div>
+    </div>
+
+<script>
+    // --- YOUTUBE PLAYER LOGIC ---
+    let player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '390', width: '640',
+            videoId: 'YOUR_VIDEO_ID_HERE', // <-- PASTE YOUR YOUTUBE VIDEO ID
+            playerVars: { 'playsinline': 1 },
+        });
+    }
+    function playChampionSong() {
+        if (player && typeof player.playVideo === 'function') player.playVideo();
+    }
+    function stopChampionSong() {
+        if (player && typeof player.stopVideo === 'function') player.stopVideo();
+    }
+    // --- END YOUTUBE PLAYER LOGIC ---
+
+    let bracketData = {};
+    let zoomLevel = 1;
+    const rounds = [
+        { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
+        { name: 'ELITE 8', matches: 4, class: 'round4' }, { name: 'FINAL 4', matches: 2, class: 'round5' }, { name: 'CHAMPIONSHIP', matches: 1, class: 'round6' }
+    ];
+
+    async function loadAndInitialize() {
+        if (window.location.hash === '#admin') {
+            const exportButton = document.getElementById('exportBtn');
+            if (exportButton) exportButton.style.display = 'block';
+        }
+
+        try {
+            const response = await fetch('bracket.json');
+            if (!response.ok) throw new Error('Could not load bracket.json. Make sure it is in the same folder as index.html.');
+            bracketData = await response.json();
+            
+            initializeBracket();
+
+            setTimeout(() => {
+                fitText('h1', 25);
+                const h1Size = parseFloat(document.querySelector('h1').style.fontSize);
+                document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px';
+                updateBracketZoom();
+            }, 350);
+
+        } catch (error) {
+            console.error("Error loading bracket:", error);
+            document.getElementById('bracket').innerHTML = `<p style="color: red; text-align: center;">${error.message}</p>`;
+        }
+    }
+
+    function initializeBracket() {
+        const titlesContainer = document.getElementById('round-titles-container');
+        const bracketMatchesContainer = document.getElementById('bracket');
+        titlesContainer.innerHTML = '';
+        bracketMatchesContainer.innerHTML = '';
+
+        buildRoundTitles(titlesContainer);
+        buildBracketMatches(bracketMatchesContainer);
+
+        attachClickHandlers();
+        attachHoverHandlers();
+    }
+
+    function buildRoundTitles(container) {
+        const titlesBracket = document.createElement('div');
+        titlesBracket.className = 'bracket';
+
+        const leftTitles = document.createElement('div');
+        leftTitles.className = 'bracket-half left';
+        const rightTitles = document.createElement('div');
+        rightTitles.className = 'bracket-half right';
+
+        for (let i = 0; i < 4; i++) { // Only 4 rounds per half
+            leftTitles.appendChild(createRoundHeader(rounds[i]));
+            rightTitles.appendChild(createRoundHeader(rounds[i]));
+        }
+
+        const finalsTitleDiv = document.createElement('div');
+        finalsTitleDiv.className = 'finals-column';
+        finalsTitleDiv.appendChild(createRoundHeader(rounds[4])); // Final 4
+        finalsTitleDiv.appendChild(createRoundHeader(rounds[5])); // Championship
+
+        titlesBracket.appendChild(leftTitles);
+        titlesBracket.appendChild(finalsTitleDiv);
+        titlesBracket.appendChild(rightTitles);
+        container.appendChild(titlesBracket);
+    }
+    
+    function createRoundHeader(round) {
+        const roundDiv = document.createElement('div');
+        roundDiv.className = `round ${round.class}`;
+        roundDiv.innerHTML = `<div class="round-header">${round.name}</div>`;
+        return roundDiv;
+    }
+
+    function buildBracketMatches(container) {
+        const bracket = document.createElement('div');
+        bracket.className = 'bracket';
+
+        const leftHalf = document.createElement('div');
+        leftHalf.className = 'bracket-half left';
+        for (let i = 0; i < 4; i++) {
+            leftHalf.appendChild(createRoundMatches(rounds[i], i, 'left'));
+        }
+        
+        const rightHalf = document.createElement('div');
+        rightHalf.className = 'bracket-half right';
+        for (let i = 0; i < 4; i++) {
+            rightHalf.appendChild(createRoundMatches(rounds[i], i, 'right'));
+        }
+        
+        const finalsDiv = document.createElement('div');
+        finalsDiv.className = 'finals-column';
+        const logo = document.createElement('img');
+        logo.src = 'SWSC_logo.png';
+        logo.alt = 'Bracket Logo';
+        logo.className = 'center-logo';
+        finalsDiv.appendChild(logo);
+        finalsDiv.appendChild(createRoundMatches(rounds[4], 4, 'finals-left'));
+        finalsDiv.appendChild(createRoundMatches(rounds[5], 5, 'finals-center'));
+        finalsDiv.appendChild(createRoundMatches(rounds[4], 4, 'finals-right')); // Placeholder for right final 4
+        
+        bracket.appendChild(leftHalf);
+        bracket.appendChild(finalsDiv);
+        bracket.appendChild(rightHalf);
+        container.appendChild(bracket);
+    }
+
+    function createRoundMatches(round, roundIndex, side) {
+        const roundDiv = document.createElement('div');
+        roundDiv.className = `round ${round.class}`;
+        const matchesDiv = document.createElement('div');
+        matchesDiv.className = 'round-matches';
+
+        let start = 0;
+        let count = round.matches;
+
+        if (side === 'left') count /= 2;
+        if (side === 'right') { start = round.matches / 2; count /= 2; }
+        if (side === 'finals-left') { start = 0; count = round.matches / 2; }
+        if (side === 'finals-right') { start = round.matches/2; count = round.matches/2; }
+        if(side === 'finals-center') {start=0; count=round.matches}
+
+        if (side === 'finals-right' || (side === 'finals-left' && roundIndex !==4) || (side==='finals-center' && roundIndex!==5)) roundDiv.style.visibility = 'hidden';
+
+
+        for (let i = start; i < start + count; i++) {
+            const matchId = `r${roundIndex}-m${i}`;
+            const matchDiv = document.createElement('div');
+            matchDiv.className = 'match';
+            matchDiv.dataset.matchId = matchId;
+            const matchData = bracketData[matchId];
+            if (!matchData) continue;
+
+            let team1, team2;
+            if (roundIndex === 0) {
+                team1 = matchData.teams[0];
+                team2 = matchData.teams[1];
+            } else {
+                team1 = { name: 'TBD', seed: null };
+                team2 = { name: 'TBD', seed: null };
+                const prevMatchId1 = `r${roundIndex - 1}-m${i * 2}`;
+                const prevMatchId2 = `r${roundIndex - 1}-m${i * 2 + 1}`;
+                const prevMatch1 = bracketData[prevMatchId1];
+                const prevMatch2 = bracketData[prevMatchId2];
+                if (prevMatch1 && prevMatch1.winner !== null) team1 = prevMatch1.teams[prevMatch1.winner];
+                if (prevMatch2 && prevMatch2.winner !== null) team2 = prevMatch2.teams[prevMatch2.winner];
+            }
+            
+            const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
+            const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
+            
+            matchDiv.innerHTML = `<div class="match-line"><div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div><div class="team ${team2_class}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name}</div></div>`;
+            
+            if (matchData.winner !== null) {
+                const teamsInMatch = matchDiv.querySelectorAll('.team');
+                if (teamsInMatch[matchData.winner]) teamsInMatch[matchData.winner].classList.add('winner');
+                if (teamsInMatch[matchData.winner === 0 ? 1 : 0]) teamsInMatch[matchData.winner === 0 ? 1 : 0].classList.add('loser');
+            }
+            matchesDiv.appendChild(matchDiv);
+        }
+        roundDiv.appendChild(matchesDiv);
+        return roundDiv;
+    }
+    
+    function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team, 10)); })); }
+    function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seed = this.querySelector('.seed'); if (seed) { highlightPlayer(this.textContent.trim().substring(seed.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
+
+    function updateZoom() {
+        const container = document.getElementById('bracketContainer');
+        container.style.zoom = zoomLevel;
+    }
+    
+    function updateBracketZoom() {
+        const scrollEl = document.getElementById('matches-scroll-container');
+        const container = document.getElementById('bracketContainer');
+        if(!scrollEl || !container) return;
+        container.style.zoom = 1;
+        const contentW = container.scrollWidth;
+        const viewW = scrollEl.clientWidth;
+        let newZoomLevel = 1;
+        if (contentW > viewW) newZoomLevel = (viewW - 10) / contentW;
+        zoomLevel = newZoomLevel;
+        updateZoom();
+    }
+
+    function selectWinner(matchId, teamIndex) {
+        const match = bracketData[matchId];
+        if (!match || !match.teams[teamIndex] || match.teams[teamIndex].name === 'TBD' || match.teams[teamIndex].name === 'BYE') return;
+
+        const isAlreadyDecided = match.winner !== null;
+        const isWinnerClicked = isAlreadyDecided && match.winner === teamIndex;
+        if (isAlreadyDecided) clearFutureMatches(matchId);
+
+        if (isWinnerClicked) {
+            match.winner = null;
+        } else {
+            match.winner = teamIndex;
+        }
+        
+        // Full re-render is the most reliable way to update UI
+        initializeBracket();
+    }
+    
+    function clearFutureMatches(matchId) {
+        const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+        if (roundNum >= rounds.length - 1) {
+            showChampion(null);
+            return;
+        }
+        const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
+        if (!bracketData[nextMatchId]) return;
+        if (bracketData[nextMatchId].winner !== null) clearFutureMatches(nextMatchId);
+        bracketData[nextMatchId].winner = null;
+    }
+
+    function showChampion(name) {
+        const overlay = document.getElementById('championOverlay');
+        if (name) {
+            document.getElementById('championName').textContent = name;
+            overlay.classList.add('show');
+            playChampionSong();
+        } else {
+            overlay.classList.remove('show');
+            stopChampionSong();
+        }
+    }
+    
+    function highlightPlayer(name) { if (name === 'TBD' || name === 'BYE') return; document.querySelectorAll('.team').forEach(team => { const seed = team.querySelector('.seed'); if (seed && team.textContent.trim().substring(seed.textContent.trim().length).trim() === name) team.classList.add('highlighted'); }); }
+    function clearHighlights() { document.querySelectorAll('.team').forEach(team => team.classList.remove('highlighted')); }
+
+    function fitText(selector, buffer) { const el = document.querySelector(selector); if (!el) return; const container = el.parentElement; let low = 1, high = 300, size = 300; while (low <= high) { let mid = Math.floor((low + high) / 2); el.style.fontSize = mid + 'px'; if (el.scrollWidth <= container.clientWidth - buffer) { size = mid; low = mid + 1; } else { high = mid - 1; } } el.style.fontSize = size + 'px'; }
+
+    window.addEventListener('load', loadAndInitialize);
+    window.addEventListener('resize', () => { fitText('h1', 25); const h1Size = parseFloat(document.querySelector('h1').style.fontSize); document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px'; updateBracketZoom(); });
+    document.getElementById('championOverlay').addEventListener('click', () => { document.getElementById('championOverlay').classList.remove('show'); stopChampionSong(); });
+
+    function exportBracket() {
+        const dataToExport = JSON.parse(JSON.stringify(bracketData));
+        for (const matchId in dataToExport) {
+            const match = dataToExport[matchId];
+            const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+            const roundName = rounds[roundNum] ? rounds[roundNum].name : 'UNKNOWN';
+            let label = `${roundName}: `;
+            if (roundNum === 0) {
+                label += `${match.teams[0].name} vs. ${match.teams[1].name}`;
+            } else {
+                const prevMatch1 = dataToExport[`r${roundNum - 1}-m${matchNum * 2}`];
+                const prevMatch2 = dataToExport[`r${roundNum - 1}-m${matchNum * 2 + 1}`];
+                const desc1 = prevMatch1 ? `(${prevMatch1.teams[0].name} vs. ${prevMatch1.teams[1].name})` : 'Unknown';
+                const desc2 = prevMatch2 ? `(${prevMatch2.teams[0].name} vs. ${prevMatch2.teams[1].name})` : 'Unknown';
+                label += `Winner of ${desc1} vs. Winner of ${desc2}`;
+            }
+            match.label = label;
+        }
+        const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'bracket.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+</body>
+</html>
