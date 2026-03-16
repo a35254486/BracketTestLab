@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bracket Test Lab</title>
+    <title>Rules of the Road March Madness</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <script src="https://www.youtube.com/iframe_api"></script>
-
-    <style>
+<style>
         #player {
             display: none;
         }
-        :root {
+		:root {
             --NavyBlack: #08262C;
             --Yellow: #E8B00F;
             --White: #FFFFFF;
             --light-gray: #F5F5F5;
             --border: #575757;
-            --loser: #bbbbbb;
+			--loser: #bbbbbb
         }
         * {
             margin: 0;
@@ -29,10 +28,10 @@
             font-family: 'Roboto Condensed', sans-serif;
             background: var(--light-gray);
             padding: 0.1rem;
-            text-align: left;
-            display: flex;
-            justify-content: center;
-        }
+		    text-align: left;
+		    display: flex; /* Establishes the flex layout model */
+		    justify-content: center; /* Centers the .container horizontally */
+	        }
         .container {
             max-width: 100%;
             margin: 0.5;
@@ -45,39 +44,39 @@
             text-align: center;
             margin-bottom: 0.1rem;
             background-color: var(--NavyBlack);
-            border: 4px solid var(--Yellow);
-            padding: 1rem;
-            border-radius: 10px;
-            position: sticky;
-            top: -1px;
-            z-index: 10;
+            border: 4px solid var(--Yellow); 
+            padding: 1rem;                 
+            border-radius: 10px;        
+            position: sticky; /* Stick to the top of the container */
+            top: 0; /* Position it at the very top */
+            z-index: 10; /* Ensure it stays above other content */
         }
         h1 {
             font-family: "Josefin Sans", sans-serif;
             font-size: 4.25rem;
-            color: var(--White);
+			color: var(--White);
             letter-spacing: 1px;
             text-transform: uppercase;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            white-space: nowrap;
-            overflow: hidden;
+            margin-bottom: 0; /*0.5rem;*/
+			white-space: nowrap;
+			overflow: hidden;
         }
         .subtitle {
             font-family: "Josefin Sans", sans-serif;
             font-size: 2.25rem;
-            color: var(--White);
+			color: var(--White);
             text-transform: uppercase;
             font-weight: 600;
-            font-style: italic;
-            white-space: nowrap;
-            overflow: hidden;
+   		    font-style: italic;
+			white-space: nowrap;
+			overflow: hidden;
         }
         .controls {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.5rem; ?=/*0.75*/
             flex-wrap: wrap;
         }
         button {
@@ -92,6 +91,22 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        .btn-NavyBlack {
+            background: var(--NavyBlack);
+            color: white;
+        }
+        .btn-NavyBlack:hover {
+            background: #005266;
+/*            transform: translateY(-2px);*/
+        }
+        .btn-secondary {
+            background: var(--Yellow);
+            color: var(--NavyBlack);
+        }
+        .btn-secondary:hover {
+            background: #D4A20D;
+/*            transform: translateY(-2px);*/
+        }
         .btn-Yellow {
             background: white;
             color: var(--NavyBlack);
@@ -101,34 +116,23 @@
             background: var(--NavyBlack);
             color: white;
         }
-
-        /* --- STICKY & SCROLL CONTAINER STYLES --- */
-        #round-titles-container {
-            position: sticky;
-            top: 135px; /* Adjust this to change distance from top */
-            z-index: 5;
-            background: var(--White);
-            padding: 10px 0;
-            border-bottom: 2px solid var(--border);
+        .bracket-scroll {
+            overflow: auto;
+            padding: 0rem 0;
+            position: relative;
         }
-        #matches-scroll-container {
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-        #player {
-            display: none;
-        }
-        
         .bracket-container {
-            transform-origin: top left; /* Changed for better zoom */
+            transform-origin: top center;
+            transition: transform 0.2s ease;
             display: inline-block;
             min-width: max-content;
         }
         .bracket {
             display: flex;
             justify-content: center;
-            align-items: stretch; /* CRITICAL FIX for sticky positioning */
+            align-items: flex-start; 
             gap: 60px;
+            min-width: auto;
         }
         .bracket-half {
             display: flex;
@@ -145,11 +149,12 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            padding-top: 5rem;
+            padding-top: 5rem; 
         }
         .round {
             display: flex;
             flex-direction: column;
+            justify-content: space-around;
         }
         .round-header {
             font-family: "Josefin Sans", sans-serif;
@@ -157,26 +162,26 @@
             color: var(--NavyBlack);
             text-align: center;
             font-weight: 750;
+            margin-bottom: 1.5rem;
             letter-spacing: 1px;
             font-style: italic;
-        }
-        #round-titles-container .round {
-            padding-bottom: 1.5rem;
         }
         .round-matches {
             display: flex;
             flex-direction: column;
+            justify-content: space-around;
             flex: 1;
-            padding-top: 1.5rem;
         }
         .match {
             position: relative;
             margin: 10px 0;
         }
+        .match-line {
+            position: relative;
+        }
         .team {
-            background-color: var(--NavyBlack);
-            color: white;
-            border: 2px solid var(--NavyBlack);
+            background: white;
+            border: 2px solid var(--border);
             padding: 5px 5px;
             min-width: 200px;
             cursor: pointer;
@@ -185,65 +190,86 @@
             font-weight: 500;
             font-size: 1.3rem;
         }
-        .team + .team {
-             border-top-color: white;
-        }
-        .team.tbd {
-            background-color: #FFFEF5 !important;
-            border-color: var(--Yellow) !important;
-            color: var(--NavyBlack) !important;
-        }
         .team:first-child {
+            border-bottom: 1px solid var(--border);
             border-radius: 4px 4px 0 0;
         }
         .team:last-child {
+            border-top: 1px solid var(--border);
             border-radius: 0 0 4px 4px;
         }
-        .team:not(.tbd):hover {
+        .team:hover {
             border-color: var(--Yellow);
             background: #FFFEF5;
-            color: var(--NavyBlack);
+/*            transform: translateX(3px);*/
         }
         .team.winner {
             background: var(--NavyBlack);
             color: white;
             border-color: var(--NavyBlack);
-            font-weight: 550;
+            font-weight: 515;
         }
         .team.loser {
             background: var(--loser);
-            color: #5c5c5c;
+            color: #575757;
             opacity: 0.6;
-            border: 2px solid var(--border);
+            border-color: var(--border);
+
         }
-        .center-logo {
-            display: block;
-            max-width: 750px;
-            height: auto;
-            margin-bottom: 3rem;
+        .team.highlighted {
+            background: var(--Yellow);
+            color: var(--NavyBlack);
+            border-color: var(--Yellow);
+            font-weight: 700;
         }
-        .match::after, .match::before {
-            content: '';
-            position: absolute;
-            background: var(--NavyBlack);
+		/* Make highlighted override winner state */
+		.team.highlighted.winner {
+		    background: var(--Yellow) !important;
+		    color: var(--NavyBlack) !important;
+		    border-color: var(--Yellow) !important;
+		}
+		.team.tbd {
+		    background-color: var(--White) !important;
+		    border-color: var(--NavyBlack) !important;
+		    color: var(--NavyBlack) !important;
+		    font-weight: normal !important;
+		}
+        .seed {
+            display: none;
+        }
+        .winner .seed {
+            background: var(--Yellow);
+            color: var(--NavyBlack);
         }
         .match::after {
+            content: '';
+            position: absolute;
             left: 100%;
             top: 50%;
             width: 30px;
             height: 2px;
+            background: var(--NavyBlack);
         }
         .match:nth-child(odd)::before {
+            content: '';
+            position: absolute;
             left: calc(100% + 30px);
             top: 50%;
             width: 2px;
+            background: var(--NavyBlack);
         }
         .match:nth-child(even)::before {
+            content: '';
+            position: absolute;
             left: calc(100% + 30px);
             bottom: 50%;
             width: 2px;
+            background: var(--NavyBlack);
         }
-        .round:last-child .match::after, .round:last-child .match::before { display: none; }
+        .round:last-child .match::after,
+        .round:last-child .match::before {
+            display: none;
+        }
         .round1 .match:nth-child(odd)::before { height: 58px; }
         .round1 .match:nth-child(even)::before { height: 58px; }
         .round2 .match:nth-child(odd)::before { height: 146px; }
@@ -252,21 +278,98 @@
         .round3 .match:nth-child(even)::before { height: 322px; }
         .round4 .match:nth-child(odd)::before { height: 674px; }
         .round4 .match:nth-child(even)::before { height: 674px; }
+        .round5 .match:nth-child(odd)::before { height: 1378px; }
+        .round5 .match:nth-child(even)::before { height: 1378px; }
         .bracket-half.right .match::after { left: auto; right: 100%; }
         .bracket-half.right .match:nth-child(odd)::before,
-        .bracket-half.right .match:nth-child(even)::before {
-            left: auto;
-            right: calc(100% + 30px);
+        .bracket-half.right .match:nth-child(even)::before { left: auto; right: calc(100% + 30px); }
+        .bracket-half.left .team:hover { transform: translateX(0/*3*/px); }
+        .bracket-half.right .team:hover { transform: translateX(0/*-3*/px); }
+        .bracket-half.left .round-header { text-align: right; }
+        .bracket-half.right .round-header { text-align: left; }
+        .bracket-scroll { overscroll-behavior-inline: contain; scroll-padding-inline: 24px; }
+        .bracket-container { min-width: auto; transform-origin: top left; }
+        .center-logo {
+            display: block;
+            max-width: 750px;
+            height: auto;
+            margin-bottom: 3rem;
+      
+		}
+        .round1 .team:first-child:not(.winner):not(.loser) {
+            border-bottom-color: white;
         }
+        .round1 .team:not(.winner):not(.loser):hover {
+            background-color: #FFFEF5;
+            border-color: var(--Yellow);
+            color: var(--NavyBlack);
+        }		
+		.team:not(.winner):not(.loser):not(.tbd) {
+		    background-color: var(--NavyBlack) !important;
+		    color: white !important;
+		    border-color: var(--NavyBlack) !important;
+		}
+		
+		/* This rule handles the white border between two active teams */
+		.team:not(.winner):not(.loser):not(.tbd) + .team:not(.winner):not(.loser):not(.tbd) {
+		    border-top-color: white !important;
+		}
+		
+		/* This rule handles the hover effect for the active teams */
+		.team:not(.winner):not(.loser):not(.tbd):hover {
+		    background-color: #FFFEF5 !important;
+		    border-color: var(--Yellow) !important;
+		    color: var(--NavyBlack) !important;
+		}
+        .round5 .match::after,
+        .round6 .match::after,
+        .round5 .match::before,
+        .round6 .match::before {
+            display: none;
+        }
+
+        /* === FINAL, WORKING CHAMPION MODAL === */
         .champion-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(245, 245, 245, 0.85);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(245, 245, 245, 0.85); /* --#F5F5F5 grey with 85% opacity */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-        .champion-overlay.show { display: flex; }
-        .champion-display { text-align: center; padding: 2rem; background: var(--NavyBlack); border: 4px solid var(--Yellow); border-radius: 8px; }
-        .champion-display h2 { font-family: "Josefin Sans", sans-serif; font-size: 4.5rem; color: var(--Yellow); margin-bottom: 1rem; }
-        .champion-name { font-size: 4.0rem; font-weight: 700; color: white; text-transform: uppercase; }
+        .champion-overlay.show {
+            display: flex; /* This makes the overlay visible */
+        }
+        .champion-display {
+            text-align: center;
+            padding: 2rem;
+            background: var(--NavyBlack);
+            border: 4px solid var(--Yellow);
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .champion-display h2 {
+            font-family: "Josefin Sans", sans-serif;
+            font-size: 4.5rem;
+            color: var(--Yellow);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .champion-name {
+            font-size: 4.0rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
@@ -276,25 +379,23 @@
             <h1>Rules of the Road March Madness </h1>
             <p class="subtitle">Who rules the Rules?</p>
         </header>
-
-        <div class="controls">
-            <button id="exportBtn" class="btn-Yellow" onclick="exportBracket()" style="display: none;">Export Updated Data</button>
+	<div class="controls">
+	    <button id="exportBtn" class="btn-Yellow" onclick="exportBracket()" style="display: none;">Export Updated Data</button>
+		<!-- hide all this shit <button class="btn-NavyBlack" onclick="resetBracket()">Reset Bracket</button>
+            <button class="btn-Yellow" onclick="exportBracket()">Export Data</button> 
+            <div class="zoom-controls">
+                <button class="btn-secondary" onclick="zoomOut()">-</button>
+                <span id="zoomLevel">100%</span>
+                <button class="btn-secondary" onclick="zoomIn()">+</button>
+            </div> -->
         </div>
-
-        <!-- NEW STICKY & SCROLL STRUCTURE -->
-        <div id="round-titles-container">
-            <!-- Round titles will be generated here by JS -->
-        </div>
-
-        <div id="matches-scroll-container">
+        <div class="bracket-scroll" id="bracketScroll">
             <div class="bracket-container" id="bracketContainer">
-                <div class="bracket" id="bracket">
-                    <!-- The bracket matches will be generated here by JS -->
-                </div>
+                <div class="bracket" id="bracket"></div>
             </div>
         </div>
     </div>
-
+    <!-- The Overlay and Champion Display are now separate from the main container -->
     <div class="champion-overlay" id="championOverlay">
         <div class="champion-display" id="championDisplay">
             <h2> N72 RULES OF THE ROAD CHAMPION </h2>
@@ -303,291 +404,395 @@
     </div>
 
 <script>
-    // --- YOUTUBE PLAYER LOGIC ---
-    let player;
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            height: '390', width: '640',
-            videoId: 'T-3ws7b4sZg', // <-- PASTE YOUR YOUTUBE VIDEO ID
-            playerVars: { 'playsinline': 1 },
+	// --- YOUTUBE PLAYER LOGIC ---
+let player; // This variable will hold our YouTube player
+
+// This special function is automatically called by YouTube's code when it's ready
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '1',
+        width: '1',
+        videoId: 'T-3ws7b4sZg', // <-- PASTE YOUR VIDEO ID HERE
+        events: {
+            'onReady': onPlayerReady
+        }
+    });
+}
+
+// This function will be called when the video player is ready
+function onPlayerReady(event) {
+    // You can do things here if needed, like set the volume
+    // event.target.setVolume(50); 
+}
+
+// A function to play the video
+function playChampionSong() {
+    if (player && typeof player.playVideo === 'function') {
+        player.playVideo();
+    }
+}
+
+// A function to stop and reset the video
+function stopChampionSong() {
+    if (player && typeof player.stopVideo === 'function') {
+        player.stopVideo();
+    }
+}
+// --- END YOUTUBE PLAYER LOGIC ---
+
+        // Global variables for the bracket data and settings
+        let bracketData = {};
+        let zoomLevel = 1;
+
+        // The rounds configuration remains, as it defines the structure
+        const rounds = [
+            { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
+            { name: 'ELITE 8', matches: 4, class: 'round4' }, { name: 'FINAL 4', matches: 2, class: 'round5' }, { name: 'CHAMPIONSHIP', matches: 1, class: 'round6' }
+        ];
+
+        // --- NEW LOADING LOGIC ---
+        async function loadAndInitialize() {
+            // Check if the URL has "?admin=true" at the end
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('admin') === 'true') {
+                // If it does, find our hidden button and show it
+                const exportButton = document.getElementById('exportBtn');
+                if (exportButton) {
+                    exportButton.style.display = 'block';
+                }
+            }
+            // --- END OF BLOCK ---
+			try {
+                const response = await fetch('bracket.json');
+                if (!response.ok) {
+                    throw new Error('Could not load bracket.json. Make sure the file is in the same folder as your index.html.');
+                }
+                bracketData = await response.json();
+
+                // 1. Build the initial HTML structure of the bracket
+                initializeBracket();
+                
+                // 2. *** NEW STEP ***: Populate the bracket with winners from the file
+
+                // 3. Zoom to fit after a brief delay
+		        setTimeout(() => {
+				// --- Run the text-fitting logic on initial load ---
+				fitText('h1', 25);
+				const h1Size = parseFloat(document.querySelector('h1').style.fontSize);
+				document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px';
+		            const scrollEl = document.getElementById('bracketScroll');
+		            const container = document.getElementById('bracketContainer');
+		            const contentW = container.scrollWidth;
+		            const viewW = scrollEl.clientWidth;
+		            if (contentW > viewW) {
+		                zoomLevel = (viewW - 25) / contentW;
+		            }
+		            updateZoom();
+		        }, 222); 
+                
+            } catch (error) {
+                console.error("Error loading bracket:", error);
+                document.getElementById('bracket').innerHTML = `<p style="color: red; text-align: center;">${error.message}</p>`;
+            }
+        }
+        
+        function initializeBracket() {
+            const bracket = document.getElementById('bracket');
+            bracket.innerHTML = '';
+            const leftHalf = document.createElement('div');
+            leftHalf.className = 'bracket-half left';
+            const rightHalf = document.createElement('div');
+            rightHalf.className = 'bracket-half right';
+            for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
+                const round = rounds[roundIndex];
+                leftHalf.appendChild(createRound(round, roundIndex, 0, round.matches / 2));
+                rightHalf.appendChild(createRound(round, roundIndex, round.matches / 2, round.matches / 2));
+            }
+            const finalsDiv = document.createElement('div');
+            finalsDiv.className = 'finals-column';
+            const finalsRound = createRound(rounds[5], 5, 0, 1);
+            const logo = document.createElement('img');
+            logo.src = 'SWSC_logo.png';
+            logo.alt = 'Bracket Logo';
+            logo.className = 'center-logo';
+            finalsDiv.appendChild(logo);
+            finalsDiv.appendChild(finalsRound);
+            bracket.appendChild(leftHalf);
+            bracket.appendChild(finalsDiv);
+            bracket.appendChild(rightHalf);
+            attachClickHandlers();
+            attachHoverHandlers();
+        }
+
+        function createRound(round, roundIndex, startMatch, matchCount) {
+            const roundDiv = document.createElement('div');
+            roundDiv.className = `round ${round.class}`;
+
+            const header = document.createElement('div');
+            header.className = 'round-header';
+            header.textContent = round.name;
+            roundDiv.appendChild(header);
+
+            const matchesDiv = document.createElement('div');
+            matchesDiv.className = 'round-matches';
+
+            for (let i = 0; i < matchCount; i++) {
+                const matchIndex = startMatch + i;
+                const matchId = `r${roundIndex}-m${matchIndex}`;
+                
+                const matchDiv = document.createElement('div');
+                matchDiv.className = 'match';
+                matchDiv.dataset.matchId = matchId;
+
+                // Get the specific match data from the pre-loaded bracketData
+                const matchData = bracketData[matchId];
+                if (!matchData) {
+                    console.warn(`Data for match ${matchId} not found.`);
+                    continue; // Skip if match data is missing
+                }
+
+                // *** THIS IS THE CORE FIX ***
+                // Instead of just taking the names, we now check if we need to
+                // populate them from a previous round's winner.
+// ... (inside the createRound function, within the for loop)
+
+// Get the potentially updated team info.
+let team1 = matchData.teams[0];
+let team2 = matchData.teams[1];
+
+if (roundIndex > 0) {
+    const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
+    const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
+    const prevMatch1 = bracketData[prevMatchId1];
+    const prevMatch2 = bracketData[prevMatchId2];
+
+    if (prevMatch1 && prevMatch1.winner !== null) {
+        team1 = prevMatch1.teams[prevMatch1.winner];
+    }
+    if (prevMatch2 && prevMatch2.winner !== null) {
+        team2 = prevMatch2.teams[prevMatch2.winner];
+    }
+}
+// Add the 'tbd' class if the team name is 'TBD'
+const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
+const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
+
+// Build the HTML for the two teams in the match.
+matchDiv.innerHTML = `
+    <div class="match-line">
+        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0">
+            <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
+        </div>
+        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1">
+            <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
+        </div>
+    </div>
+`;
+
+// ... (the rest of the function continues as before)
+
+                // Now, check if the CURRENT match has a winner and apply styling.
+                if (matchData.winner !== null) {
+                    const teamsInMatch = matchDiv.querySelectorAll('.team');
+                    const winnerIndex = matchData.winner;
+                    const loserIndex = winnerIndex === 0 ? 1 : 0;
+                    
+                    if (teamsInMatch[winnerIndex]) teamsInMatch[winnerIndex].classList.add('winner');
+                    if (teamsInMatch[loserIndex]) teamsInMatch[loserIndex].classList.add('loser');
+                }
+                
+                matchesDiv.appendChild(matchDiv);
+            }
+            roundDiv.appendChild(matchesDiv);
+            return roundDiv;
+        }
+        // --- All functions below this line remain the same ---
+        function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team)); })); }
+        function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seedElement = this.querySelector('.seed'); if (seedElement) { highlightPlayer(this.textContent.trim().substring(seedElement.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
+        
+        function zoomIn() { zoomLevel = Math.min(zoomLevel + 0.1, 2); updateZoom(); }
+        function zoomOut() { zoomLevel = Math.max(zoomLevel - 0.1, 0.3); updateZoom(); }
+        function updateZoom() {
+            const container = document.getElementById('bracketContainer');
+            container.style.zoom = zoomLevel;
+        }
+
+function selectWinner(matchId, teamIndex) {
+    const match = bracketData[matchId];
+    const selectedTeam = match.teams[teamIndex];
+    if (selectedTeam.name === 'TBD' || selectedTeam.name === 'BYE') return;
+    
+    const isAlreadyDecided = match.winner !== null;
+    const isWinnerClicked = isAlreadyDecided && match.winner === teamIndex;
+    
+    // If this match already has a winner, clear all future progress first
+    if (isAlreadyDecided) {
+        clearFutureMatches(matchId);
+    }
+    
+    // If clicking the current winner, UNDO the decision
+    if (isWinnerClicked) {
+        match.winner = null;
+        const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
+        matchDiv.querySelectorAll('.team').forEach(t => {
+            t.classList.remove('winner', 'loser');
+        });
+    } 
+    // Otherwise, set new winner
+    else {
+        match.winner = teamIndex;
+        const matchDiv = document.querySelector(`[data-match-id="${matchId}"]`);
+        matchDiv.querySelectorAll('.team').forEach((t, idx) => {
+            t.classList.remove('winner', 'loser');
+            if (idx === teamIndex) t.classList.add('winner');
+            else t.classList.add('loser');
+        });
+        advanceWinner(matchId, selectedTeam);
+    }
+}
+		function advanceWinner(matchId, winningTeam) {
+		    const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+		    if (roundNum >= rounds.length - 1) {
+		        showChampion(winningTeam.name);
+		        return;
+		    }
+		    const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
+		    const position = matchNum % 2;
+		    bracketData[nextMatchId].teams[position] = { name: winningTeam.name, seed: winningTeam.seed };
+		    const nextTeamDiv = document.querySelector(`[data-match-id="${nextMatchId}"] [data-team="${position}"]`);
+		    nextTeamDiv.innerHTML = `<span class="seed">${winningTeam.seed || '-'}</span>${winningTeam.name}`;
+		    
+		    // Remove tbd class so team becomes navy blue
+		    nextTeamDiv.classList.remove('tbd');
+		}
+
+function clearFutureMatches(matchId) {
+    const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+    
+    if (roundNum >= rounds.length - 1) {
+        showChampion(null);
+        return;
+    }
+    
+    const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
+    const position = matchNum % 2;
+    
+    if (!bracketData[nextMatchId]) return;
+    
+    // If the next match has a winner, recursively clear future matches
+    if (bracketData[nextMatchId].winner !== null) {
+        clearFutureMatches(nextMatchId);
+    }
+    
+    // Reset the next match data
+    bracketData[nextMatchId].teams[position] = { name: 'TBD', seed: null };
+    bracketData[nextMatchId].winner = null;
+    
+    // Update the UI
+    const nextMatchDiv = document.querySelector(`[data-match-id="${nextMatchId}"]`);
+    if (nextMatchDiv) {
+        const teamToClear = nextMatchDiv.querySelector(`[data-team="${position}"]`);
+        if (teamToClear) {
+            teamToClear.innerHTML = `<span class="seed">-</span>TBD`;
+            teamToClear.classList.add('tbd'); // Add tbd class to make it white
+            teamToClear.classList.remove('winner', 'loser');
+        }
+        // Clear winner/loser from both teams in next match
+        nextMatchDiv.querySelectorAll('.team').forEach(team => {
+            team.classList.remove('winner', 'loser');
         });
     }
-    function playChampionSong() {
-        if (player && typeof player.playVideo === 'function') player.playVideo();
-    }
-    function stopChampionSong() {
-        if (player && typeof player.stopVideo === 'function') player.stopVideo();
-    }
-    // --- END YOUTUBE PLAYER LOGIC ---
-
-    let bracketData = {};
-    let zoomLevel = 1;
-    const rounds = [
-        { name: 'FIRST ROUND', matches: 32, class: 'round1' }, { name: 'SECOND ROUND', matches: 16, class: 'round2' }, { name: 'SWEET 16', matches: 8, class: 'round3' },
-        { name: 'ELITE 8', matches: 4, class: 'round4' }, { name: 'FINAL 4', matches: 2, class: 'round5' }, { name: 'CHAMPIONSHIP', matches: 1, class: 'round6' }
-    ];
-
-    async function loadAndInitialize() {
-        if (window.location.hash === '#admin') {
-            const exportButton = document.getElementById('exportBtn');
-            if (exportButton) exportButton.style.display = 'block';
-        }
-
-        try {
-            const response = await fetch('bracket.json');
-            if (!response.ok) throw new Error('Could not load bracket.json. Make sure it is in the same folder as index.html.');
-            bracketData = await response.json();
-            
-            initializeBracket();
-
-            setTimeout(() => {
-                fitText('h1', 25);
-                const h1Size = parseFloat(document.querySelector('h1').style.fontSize);
-                document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px';
-                updateBracketZoom();
-            }, 350);
-
-        } catch (error) {
-            console.error("Error loading bracket:", error);
-            document.getElementById('bracket').innerHTML = `<p style="color: red; text-align: center;">${error.message}</p>`;
-        }
-    }
-
-    function initializeBracket() {
-        const titlesContainer = document.getElementById('round-titles-container');
-        const bracketMatchesContainer = document.getElementById('bracket');
-        titlesContainer.innerHTML = '';
-        bracketMatchesContainer.innerHTML = '';
-
-        buildRoundTitles(titlesContainer);
-        buildBracketMatches(bracketMatchesContainer);
-
-        attachClickHandlers();
-        attachHoverHandlers();
-    }
-
-    function buildRoundTitles(container) {
-        const titlesBracket = document.createElement('div');
-        titlesBracket.className = 'bracket';
-
-        const leftTitles = document.createElement('div');
-        leftTitles.className = 'bracket-half left';
-        const rightTitles = document.createElement('div');
-        rightTitles.className = 'bracket-half right';
-
-        for (let i = 0; i < 4; i++) { // Only 4 rounds per half
-            leftTitles.appendChild(createRoundHeader(rounds[i]));
-            rightTitles.appendChild(createRoundHeader(rounds[i]));
-        }
-
-        const finalsTitleDiv = document.createElement('div');
-        finalsTitleDiv.className = 'finals-column';
-        finalsTitleDiv.appendChild(createRoundHeader(rounds[4])); // Final 4
-        finalsTitleDiv.appendChild(createRoundHeader(rounds[5])); // Championship
-
-        titlesBracket.appendChild(leftTitles);
-        titlesBracket.appendChild(finalsTitleDiv);
-        titlesBracket.appendChild(rightTitles);
-        container.appendChild(titlesBracket);
-    }
-    
-    function createRoundHeader(round) {
-        const roundDiv = document.createElement('div');
-        roundDiv.className = `round ${round.class}`;
-        roundDiv.innerHTML = `<div class="round-header">${round.name}</div>`;
-        return roundDiv;
-    }
-
-    function buildBracketMatches(container) {
-        const bracket = document.createElement('div');
-        bracket.className = 'bracket';
-
-        const leftHalf = document.createElement('div');
-        leftHalf.className = 'bracket-half left';
-        for (let i = 0; i < 4; i++) {
-            leftHalf.appendChild(createRoundMatches(rounds[i], i, 'left'));
-        }
-        
-        const rightHalf = document.createElement('div');
-        rightHalf.className = 'bracket-half right';
-        for (let i = 0; i < 4; i++) {
-            rightHalf.appendChild(createRoundMatches(rounds[i], i, 'right'));
-        }
-        
-        const finalsDiv = document.createElement('div');
-        finalsDiv.className = 'finals-column';
-        const logo = document.createElement('img');
-        logo.src = 'SWSC_logo.png';
-        logo.alt = 'Bracket Logo';
-        logo.className = 'center-logo';
-        finalsDiv.appendChild(logo);
-        finalsDiv.appendChild(createRoundMatches(rounds[4], 4, 'finals-left'));
-        finalsDiv.appendChild(createRoundMatches(rounds[5], 5, 'finals-center'));
-        finalsDiv.appendChild(createRoundMatches(rounds[4], 4, 'finals-right')); // Placeholder for right final 4
-        
-        bracket.appendChild(leftHalf);
-        bracket.appendChild(finalsDiv);
-        bracket.appendChild(rightHalf);
-        container.appendChild(bracket);
-    }
-
-    function createRoundMatches(round, roundIndex, side) {
-        const roundDiv = document.createElement('div');
-        roundDiv.className = `round ${round.class}`;
-        const matchesDiv = document.createElement('div');
-        matchesDiv.className = 'round-matches';
-
-        let start = 0;
-        let count = round.matches;
-
-        if (side === 'left') count /= 2;
-        if (side === 'right') { start = round.matches / 2; count /= 2; }
-        if (side === 'finals-left') { start = 0; count = round.matches / 2; }
-        if (side === 'finals-right') { start = round.matches/2; count = round.matches/2; }
-        if(side === 'finals-center') {start=0; count=round.matches}
-
-        if (side === 'finals-right' || (side === 'finals-left' && roundIndex !==4) || (side==='finals-center' && roundIndex!==5)) roundDiv.style.visibility = 'hidden';
-
-
-        for (let i = start; i < start + count; i++) {
-            const matchId = `r${roundIndex}-m${i}`;
-            const matchDiv = document.createElement('div');
-            matchDiv.className = 'match';
-            matchDiv.dataset.matchId = matchId;
-            const matchData = bracketData[matchId];
-            if (!matchData) continue;
-
-            let team1, team2;
-            if (roundIndex === 0) {
-                team1 = matchData.teams[0];
-                team2 = matchData.teams[1];
+}
+        function showChampion(name) {
+            const overlay = document.getElementById('championOverlay');
+            if (name) {
+                document.getElementById('championName').textContent = name;
+                overlay.classList.add('show');
+                playChampionSong(); // <-- ADD THIS LINE to play the song
             } else {
-                team1 = { name: 'TBD', seed: null };
-                team2 = { name: 'TBD', seed: null };
-                const prevMatchId1 = `r${roundIndex - 1}-m${i * 2}`;
-                const prevMatchId2 = `r${roundIndex - 1}-m${i * 2 + 1}`;
-                const prevMatch1 = bracketData[prevMatchId1];
-                const prevMatch2 = bracketData[prevMatchId2];
-                if (prevMatch1 && prevMatch1.winner !== null) team1 = prevMatch1.teams[prevMatch1.winner];
-                if (prevMatch2 && prevMatch2.winner !== null) team2 = prevMatch2.teams[prevMatch2.winner];
+                overlay.classList.remove('show');
+                stopChampionSong(); // <-- ADD THIS LINE to stop the song
             }
-            
-            const team1_class = (team1.name === 'TBD' || team1.name === 'BYE') ? 'tbd' : '';
-            const team2_class = (team2.name === 'TBD' || team2.name === 'BYE') ? 'tbd' : '';
-            
-            matchDiv.innerHTML = `<div class="match-line"><div class="team ${team1_class}" data-match="${matchId}" data-team="0"><span class="seed">${team1.seed || '-'}</span>${team1.name}</div><div class="team ${team2_class}" data-match="${matchId}" data-team="1"><span class="seed">${team2.seed || '-'}</span>${team2.name}</div></div>`;
-            
-            if (matchData.winner !== null) {
-                const teamsInMatch = matchDiv.querySelectorAll('.team');
-                if (teamsInMatch[matchData.winner]) teamsInMatch[matchData.winner].classList.add('winner');
-                if (teamsInMatch[matchData.winner === 0 ? 1 : 0]) teamsInMatch[matchData.winner === 0 ? 1 : 0].classList.add('loser');
-            }
-            matchesDiv.appendChild(matchDiv);
         }
-        roundDiv.appendChild(matchesDiv);
-        return roundDiv;
-    }
-    
-    function attachClickHandlers() { document.querySelectorAll('.team').forEach(team => team.addEventListener('click', function() { selectWinner(this.dataset.match, parseInt(this.dataset.team, 10)); })); }
-    function attachHoverHandlers() { document.querySelectorAll('.team').forEach(team => { team.addEventListener('mouseenter', function() { const seed = this.querySelector('.seed'); if (seed) { highlightPlayer(this.textContent.trim().substring(seed.textContent.trim().length).trim()); } }); team.addEventListener('mouseleave', clearHighlights); }); }
-
-    function updateZoom() {
-        const container = document.getElementById('bracketContainer');
-        container.style.zoom = zoomLevel;
-    }
-    
-    function updateBracketZoom() {
-        const scrollEl = document.getElementById('matches-scroll-container');
-        const container = document.getElementById('bracketContainer');
-        if(!scrollEl || !container) return;
-        container.style.zoom = 1;
-        const contentW = container.scrollWidth;
-        const viewW = scrollEl.clientWidth;
-        let newZoomLevel = 1;
-        if (contentW > viewW) newZoomLevel = (viewW - 10) / contentW;
-        zoomLevel = newZoomLevel;
-        updateZoom();
-    }
-
-    function selectWinner(matchId, teamIndex) {
-        const match = bracketData[matchId];
-        if (!match || !match.teams[teamIndex] || match.teams[teamIndex].name === 'TBD' || match.teams[teamIndex].name === 'BYE') return;
-
-        const isAlreadyDecided = match.winner !== null;
-        const isWinnerClicked = isAlreadyDecided && match.winner === teamIndex;
-        if (isAlreadyDecided) clearFutureMatches(matchId);
-
-        if (isWinnerClicked) {
-            match.winner = null;
-        } else {
-            match.winner = teamIndex;
+        function highlightPlayer(name) { if (name === 'TBD' || name === 'BYE') return; document.querySelectorAll('.team').forEach(team => { const teamName = team.textContent.trim().substring(team.querySelector('.seed').textContent.trim().length).trim(); if (teamName === name) { team.classList.add('highlighted'); } }); }
+        function clearHighlights() { document.querySelectorAll('.team').forEach(team => team.classList.remove('highlighted')); }
+        function resetBracket() {
+            document.getElementById('championOverlay').classList.remove('show');
+            loadAndInitialize();
         }
+
+			window.addEventListener('load', () => {
+		    loadAndInitialize();
+		    fitBracket();
+		});
+        document.getElementById('championOverlay').addEventListener('click', () => { document.getElementById('championOverlay').classList.remove('show'); });
         
-        // Full re-render is the most reliable way to update UI
-        initializeBracket();
-    }
-    
-    function clearFutureMatches(matchId) {
-        const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-        if (roundNum >= rounds.length - 1) {
-            showChampion(null);
-            return;
-        }
-        const nextMatchId = `r${roundNum + 1}-m${Math.floor(matchNum / 2)}`;
-        if (!bracketData[nextMatchId]) return;
-        if (bracketData[nextMatchId].winner !== null) clearFutureMatches(nextMatchId);
-        bracketData[nextMatchId].winner = null;
-    }
+        function fitText(selector, buffer) { const el = document.querySelector(selector); if (!el) return; const container = el.parentElement; let low = 1, high = 300, size = 300; while (low <= high) { let mid = Math.floor((low + high) / 2); el.style.fontSize = mid + 'px'; if (el.scrollWidth <= container.clientWidth - buffer) { size = mid; low = mid + 1; } else { high = mid - 1; } } el.style.fontSize = size + 'px'; }
+window.addEventListener('resize', function() { 
+	fitText('h1', 25); 
+	const h1Size = parseFloat(document.querySelector('h1').style.fontSize); 
+	document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px'; 
+          const scrollEl = document.getElementById('bracketScroll');
+          const container = document.getElementById('bracketContainer');
+	      const contentW = container.scrollWidth;
+          const viewW = scrollEl.clientWidth;
+          
+          let newZoomLevel = 1; // Default to 100%
 
-    function showChampion(name) {
-        const overlay = document.getElementById('championOverlay');
-        if (name) {
-            document.getElementById('championName').textContent = name;
-            overlay.classList.add('show');
-            playChampionSong(); // <-- ADD THIS LINE to play the song
-        } else {
-            overlay.classList.remove('show');
-            stopChampionSong();
-        }
-    }
-    
-    function highlightPlayer(name) { if (name === 'TBD' || name === 'BYE') return; document.querySelectorAll('.team').forEach(team => { const seed = team.querySelector('.seed'); if (seed && team.textContent.trim().substring(seed.textContent.trim().length).trim() === name) team.classList.add('highlighted'); }); }
-    function clearHighlights() { document.querySelectorAll('.team').forEach(team => team.classList.remove('highlighted')); }
+          if (contentW > viewW) {
+              newZoomLevel = (viewW - 10) / contentW;
+          }
+          
+          zoomLevel = newZoomLevel;
+          updateZoom(); // Apply the new zoom level
+          // --- END OF SURGICAL UPDATE ---
+        });
+		function exportBracket() {
+            // Create a deep copy of the data to avoid modifying the live bracket
+            const dataToExport = JSON.parse(JSON.stringify(bracketData));
 
-    function fitText(selector, buffer) { const el = document.querySelector(selector); if (!el) return; const container = el.parentElement; let low = 1, high = 300, size = 300; while (low <= high) { let mid = Math.floor((low + high) / 2); el.style.fontSize = mid + 'px'; if (el.scrollWidth <= container.clientWidth - buffer) { size = mid; low = mid + 1; } else { high = mid - 1; } } el.style.fontSize = size + 'px'; }
+            // Loop through all rounds and matches in our new export object
+            for (const matchId in dataToExport) {
+                const match = dataToExport[matchId];
+                const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
+                
+                const roundName = rounds[roundNum] ? rounds[roundNum].name : 'UNKNOWN ROUND';
+                let label = `${roundName}: `;
 
-    window.addEventListener('load', loadAndInitialize);
-    window.addEventListener('resize', () => { fitText('h1', 25); const h1Size = parseFloat(document.querySelector('h1').style.fontSize); document.querySelector('.subtitle').style.fontSize = (h1Size * 0.69) + 'px'; updateBracketZoom(); });
-    document.getElementById('championOverlay').addEventListener('click', () => { document.getElementById('championOverlay').classList.remove('show'); stopChampionSong(); });
+                // For the first round, the label is simple: Team 1 vs Team 2
+                if (roundNum === 0) {
+                    const team1Name = match.teams[0] ? match.teams[0].name : 'TBD';
+                    const team2Name = match.teams[1] ? match.teams[1].name : 'TBD';
+                    label += `${team1Name} vs. ${team2Name}`;
+                } 
+                // For all later rounds, we build a descriptive label
+                else {
+                    const prevMatchId1 = `r${roundNum - 1}-m${matchNum * 2}`;
+                    const prevMatchId2 = `r${roundNum - 1}-m${matchNum * 2 + 1}`;
+                    
+                    const prevMatch1 = dataToExport[prevMatchId1];
+                    const prevMatch2 = dataToExport[prevMatchId2];
 
-    function exportBracket() {
-        const dataToExport = JSON.parse(JSON.stringify(bracketData));
-        for (const matchId in dataToExport) {
-            const match = dataToExport[matchId];
-            const [roundNum, matchNum] = matchId.substring(1).split('-m').map(Number);
-            const roundName = rounds[roundNum] ? rounds[roundNum].name : 'UNKNOWN';
-            let label = `${roundName}: `;
-            if (roundNum === 0) {
-                label += `${match.teams[0].name} vs. ${match.teams[1].name}`;
-            } else {
-                const prevMatch1 = dataToExport[`r${roundNum - 1}-m${matchNum * 2}`];
-                const prevMatch2 = dataToExport[`r${roundNum - 1}-m${matchNum * 2 + 1}`];
-                const desc1 = prevMatch1 ? `(${prevMatch1.teams[0].name} vs. ${prevMatch1.teams[1].name})` : 'Unknown';
-                const desc2 = prevMatch2 ? `(${prevMatch2.teams[0].name} vs. ${prevMatch2.teams[1].name})` : 'Unknown';
-                label += `Winner of ${desc1} vs. Winner of ${desc2}`;
+                    const prevMatch1Desc = prevMatch1 ? `(${prevMatch1.teams[0].name} vs. ${prevMatch1.teams[1].name})` : 'Unknown Match';
+                    const prevMatch2Desc = prevMatch2 ? `(${prevMatch2.teams[0].name} vs. ${prevMatch2.teams[1].name})` : 'Unknown Match';
+
+                    label += `Winner of ${prevMatch1Desc} vs. Winner of ${prevMatch2Desc}`;
+                }
+                // Add the new human-readable label to the match object
+                match.label = label;
             }
-            match.label = label;
+
+            // Convert the enhanced object to JSON and trigger the download
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bracket.json'; // Name the file correctly
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
-        const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'bracket.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-</script>
-</body>
+		</script>
+	</body>
 </html>
