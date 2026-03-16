@@ -404,41 +404,60 @@
     </div>
 
 <script>
-	// --- YOUTUBE PLAYER LOGIC ---
-let player; // This variable will hold our YouTube player
+    // --- YOUTUBE PLAYER LOGIC (WITH AUTOPLAY FIX) ---
+    let player;
+    let isPlayerReady = false;
 
-// This special function is automatically called by YouTube's code when it's ready
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-        height: '1',
-        width: '1',
-        videoId: 'T-3ws7b4sZg', // <-- PASTE YOUR VIDEO ID HERE
-        events: {
-            'onReady': onPlayerReady
+    // This function is called by the YouTube API when it is ready.
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '1',
+            width: '1',
+            videoId: 'YOUR_VIDEO_ID_HERE', // <-- MAKE SURE YOUR VIDEO ID IS PASTED HERE
+            playerVars: {
+                'playsinline': 1,
+                'autoplay': 1, // Attempt to autoplay
+                'mute': 1      // Start muted to satisfy browser policies
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    // When the player is ready, this function is called.
+    function onPlayerReady(event) {
+        isPlayerReady = true;
+        // The video will start playing automatically here, but it's muted.
+    }
+
+    // This function helps us know the video is truly playing in the background.
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+            // Now that we know it's playing, we can pause it immediately.
+            // It's now "primed" and ready to be unmuted and played later.
+            player.pauseVideo();
+            player.seekTo(0); // Rewind to the beginning
         }
-    });
-}
-
-// This function will be called when the video player is ready
-function onPlayerReady(event) {
-    // You can do things here if needed, like set the volume
-    // event.target.setVolume(50); 
-}
-
-// A function to play the video
-function playChampionSong() {
-    if (player && typeof player.playVideo === 'function') {
-        player.playVideo();
     }
-}
 
-// A function to stop and reset the video
-function stopChampionSong() {
-    if (player && typeof player.stopVideo === 'function') {
-        player.stopVideo();
+    // This is our function to play the victory song.
+    function playChampionSong() {
+        if (isPlayerReady && player && typeof player.unMute === 'function') {
+            player.unMute();      // Unmute the sound
+            player.seekTo(0);     // Make sure it starts from the beginning
+            player.playVideo();   // Play the video
+        }
     }
-}
-// --- END YOUTUBE PLAYER LOGIC ---
+
+    // This is our function to stop the song.
+    function stopChampionSong() {
+        if (isPlayerReady && player && typeof player.stopVideo === 'function') {
+            player.stopVideo();
+        }
+    }
+    // --- END YOUTUBE PLAYER LOGIC ---
 
         // Global variables for the bracket data and settings
         let bracketData = {};
