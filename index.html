@@ -9,6 +9,9 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
+        #player {
+            display: none;
+        }
         :root {
             --NavyBlack: #08262C;
             --Yellow: #E8B00F;
@@ -305,7 +308,7 @@
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
             height: '390', width: '640',
-            videoId: 'YOUR_VIDEO_ID_HERE', // <-- PASTE YOUR YOUTUBE VIDEO ID
+            videoId: 'T-3ws7b4sZg', // <-- PASTE YOUR YOUTUBE VIDEO ID
             playerVars: { 'playsinline': 1 },
         });
     }
@@ -541,7 +544,7 @@
         if (name) {
             document.getElementById('championName').textContent = name;
             overlay.classList.add('show');
-            playChampionSong();
+            playChampionSong(); // <-- ADD THIS LINE to play the song
         } else {
             overlay.classList.remove('show');
             stopChampionSong();
