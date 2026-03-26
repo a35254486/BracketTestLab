@@ -6,12 +6,8 @@
     <title>Rules of the Road March Madness</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    <script src="https://www.youtube.com/iframe_api"></script>
-<style>
-        #player {
-            display: none;
-        }
-		:root {
+    <style>
+        :root {
             --NavyBlack: #08262C;
             --Yellow: #E8B00F;
             --White: #FFFFFF;
@@ -211,7 +207,7 @@
         }
         .team.loser {
             background: var(--loser);
-            color: #575757;
+            color: #232323;
             opacity: 0.6;
             border-color: var(--border);
 
@@ -370,10 +366,53 @@
             color: white;
             text-transform: uppercase;
         }
+		/* --- ARENA STYLES --- */
+.finals-column {
+    background: linear-gradient(to bottom, #1a2533, #08262C); /* Dark Arena background */
+    padding-top: 2rem !important; /* Override existing padding */
+    border-radius: 10px;
+    border: 2px solid var(--Yellow);
+}
+
+.arena-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--Yellow);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* A container to hold the two Final Four matchups side-by-side */
+.final-four-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+}
+
+/* Style for a team that has made it into the Arena */
+.arena-team {
+    background-color: var(--NavyBlack) !important;
+    border: 2px solid var(--Yellow) !important;
+    box-shadow: 0 0 15px rgba(232, 176, 15, 0.7); /* The "glow" effect */
+    color: white !important;
+}
+
+/* Make the Championship match stand out */
+#championship-match {
+    margin-top: 2rem;
+    width: 250px; /* Give the final match a slightly larger width */
+    transform: scale(1.1);
+}
+/* --- END ARENA STYLES --- */
+
     </style>
 </head>
 <body>
-    <div id="player"></div>
     <div class="container">
         <header>
             <h1>Rules of the Road March Madness </h1>
@@ -404,61 +443,6 @@
     </div>
 
 <script>
-    // --- YOUTUBE PLAYER LOGIC (WITH AUTOPLAY FIX) ---
-    let player;
-    let isPlayerReady = false;
-
-    // This function is called by the YouTube API when it is ready.
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            height: '1',
-            width: '1',
-            videoId: 'T-3ws7b4sZg', // <-- MAKE SURE YOUR VIDEO ID IS PASTED HERE
-            playerVars: {
-                'playsinline': 1,
-                'autoplay': 1, // Attempt to autoplay
-                'mute': 1      // Start muted to satisfy browser policies
-            },
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-            }
-        });
-    }
-
-    // When the player is ready, this function is called.
-    function onPlayerReady(event) {
-        isPlayerReady = true;
-        // The video will start playing automatically here, but it's muted.
-    }
-
-    // This function helps us know the video is truly playing in the background.
-    function onPlayerStateChange(event) {
-        if (event.data === YT.PlayerState.PLAYING) {
-            // Now that we know it's playing, we can pause it immediately.
-            // It's now "primed" and ready to be unmuted and played later.
-            player.pauseVideo();
-            player.seekTo(0); // Rewind to the beginning
-        }
-    }
-
-    // This is our function to play the victory song.
-    function playChampionSong() {
-        if (isPlayerReady && player && typeof player.unMute === 'function') {
-            player.unMute();      // Unmute the sound
-            player.seekTo(0);     // Make sure it starts from the beginning
-            player.playVideo();   // Play the video
-        }
-    }
-
-    // This is our function to stop the song.
-    function stopChampionSong() {
-        if (isPlayerReady && player && typeof player.stopVideo === 'function') {
-            player.stopVideo();
-        }
-    }
-    // --- END YOUTUBE PLAYER LOGIC ---
-
         // Global variables for the bracket data and settings
         let bracketData = {};
         let zoomLevel = 1;
@@ -517,32 +501,67 @@
         
         function initializeBracket() {
             const bracket = document.getElementById('bracket');
-            bracket.innerHTML = '';
+            bracket.innerHTML = ''; // Clear previous content
+
+            // --- Build the Left and Right Halves (Rounds 1-4) ---
             const leftHalf = document.createElement('div');
             leftHalf.className = 'bracket-half left';
+            // Only build the first 4 rounds for the outer wings
+            for (let roundIndex = 0; roundIndex < 4; roundIndex++) {
+                leftHalf.appendChild(createRound(rounds[roundIndex], roundIndex, 0, rounds[roundIndex].matches / 2));
+            }
+
             const rightHalf = document.createElement('div');
             rightHalf.className = 'bracket-half right';
-            for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
-                const round = rounds[roundIndex];
-                leftHalf.appendChild(createRound(round, roundIndex, 0, round.matches / 2));
-                rightHalf.appendChild(createRound(round, roundIndex, round.matches / 2, round.matches / 2));
+            for (let roundIndex = 0; roundIndex < 4; roundIndex++) {
+                rightHalf.appendChild(createRound(rounds[roundIndex], roundIndex, rounds[roundIndex].matches / 2, rounds[roundIndex].matches / 2));
             }
+
+            // --- Build the "Arena" Center Column ---
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
-            const finalsRound = createRound(rounds[5], 5, 0, 1);
+
+            // Add the Arena Title
+            const arenaTitle = document.createElement('div');
+            arenaTitle.className = 'arena-title';
+            arenaTitle.textContent = 'THE FINALS';
+            finalsDiv.appendChild(arenaTitle);
+
+            // Create a container for the Final Four matchups
+            const finalFourContainer = document.createElement('div');
+            finalFourContainer.className = 'final-four-container';
+
+            // Create Final Four Match 1 (winner from left side)
+            const ffMatch1 = createRound(rounds[4], 4, 0, 1); // Round 5, Match 0
+            finalFourContainer.appendChild(ffMatch1);
+
+            // Add your logo
             const logo = document.createElement('img');
             logo.src = 'SWSC_logo.png';
             logo.alt = 'Bracket Logo';
             logo.className = 'center-logo';
-            finalsDiv.appendChild(logo);
-            finalsDiv.appendChild(finalsRound);
+            finalFourContainer.appendChild(logo);
+
+            // Create Final Four Match 2 (winner from right side)
+            const ffMatch2 = createRound(rounds[4], 4, 1, 1); // Round 5, Match 1
+            finalFourContainer.appendChild(ffMatch2);
+            
+            finalsDiv.appendChild(finalFourContainer);
+
+            // Create Championship Match
+            const champMatch = createRound(rounds[5], 5, 0, 1); // Round 6, Match 0
+            champMatch.id = 'championship-match';
+            finalsDiv.appendChild(champMatch);
+
+            // --- Assemble the final bracket ---
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
             bracket.appendChild(rightHalf);
+
+            // Attach all the click/hover event listeners
             attachClickHandlers();
             attachHoverHandlers();
         }
-
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
@@ -573,42 +592,47 @@
                 // *** THIS IS THE CORE FIX ***
                 // Instead of just taking the names, we now check if we need to
                 // populate them from a previous round's winner.
-// ... (inside the createRound function, within the for loop)
+				// ... (inside the createRound function, within the for loop)
+				
+				// Get the potentially updated team info.
+				let team1 = matchData.teams[0];
+				let team2 = matchData.teams[1];
+				
+				if (roundIndex > 0) {
+				    const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
+				    const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
+				    const prevMatch1 = bracketData[prevMatchId1];
+				    const prevMatch2 = bracketData[prevMatchId2];
+				
+				    if (prevMatch1 && prevMatch1.winner !== null) {
+				        team1 = prevMatch1.teams[prevMatch1.winner];
+				    }
+				    if (prevMatch2 && prevMatch2.winner !== null) {
+				        team2 = prevMatch2.teams[prevMatch2.winner];
+				    }
+				}
+				// Add the 'tbd' class if the team name is 'TBD'
+				const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
+				const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
+				
+				// Build the HTML for the two teams in the match.
+                // Add a class if the team is in the "Arena" (rounds 5 and 6)
+                const arenaTeamClass = (roundIndex >= 4) ? ' arena-team' : '';
 
-// Get the potentially updated team info.
-let team1 = matchData.teams[0];
-let team2 = matchData.teams[1];
+                // Build the HTML for the two teams in the match.
+                matchDiv.innerHTML = `
+                    <div class="match-line">
+                        <div class="team${team1TBDClass}${arenaTeamClass}" data-match="${matchId}" data-team="0">
+                            <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
+                        </div>
+                        <div class="team${team2TBDClass}${arenaTeamClass}" data-match="${matchId}" data-team="1">
+                            <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
+                        </div>
+                    </div>
+                `;
 
-if (roundIndex > 0) {
-    const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
-    const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
-    const prevMatch1 = bracketData[prevMatchId1];
-    const prevMatch2 = bracketData[prevMatchId2];
-
-    if (prevMatch1 && prevMatch1.winner !== null) {
-        team1 = prevMatch1.teams[prevMatch1.winner];
-    }
-    if (prevMatch2 && prevMatch2.winner !== null) {
-        team2 = prevMatch2.teams[prevMatch2.winner];
-    }
-}
-// Add the 'tbd' class if the team name is 'TBD'
-const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
-const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
-
-// Build the HTML for the two teams in the match.
-matchDiv.innerHTML = `
-    <div class="match-line">
-        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0">
-            <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
-        </div>
-        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1">
-            <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
-        </div>
-    </div>
-`;
-
-// ... (the rest of the function continues as before)
+				
+				// ... (the rest of the function continues as before)
 
                 // Now, check if the CURRENT match has a winner and apply styling.
                 if (matchData.winner !== null) {
@@ -727,10 +751,8 @@ function clearFutureMatches(matchId) {
             if (name) {
                 document.getElementById('championName').textContent = name;
                 overlay.classList.add('show');
-                playChampionSong(); // <-- ADD THIS LINE to play the song
             } else {
                 overlay.classList.remove('show');
-                stopChampionSong(); // <-- ADD THIS LINE to stop the song
             }
         }
         function highlightPlayer(name) { if (name === 'TBD' || name === 'BYE') return; document.querySelectorAll('.team').forEach(team => { const teamName = team.textContent.trim().substring(team.querySelector('.seed').textContent.trim().length).trim(); if (teamName === name) { team.classList.add('highlighted'); } }); }
