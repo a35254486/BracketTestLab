@@ -366,50 +366,6 @@
             color: white;
             text-transform: uppercase;
         }
-		/* --- ARENA STYLES --- */
-.finals-column {
-    background: linear-gradient(to bottom, #1a2533, #08262C); /* Dark Arena background */
-    padding-top: 2rem !important; /* Override existing padding */
-    border-radius: 10px;
-    border: 2px solid var(--Yellow);
-}
-
-.arena-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--Yellow);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-/* A container to hold the two Final Four matchups side-by-side */
-.final-four-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-    width: 100%;
-}
-
-/* NEW: Style ONLY for the teams in the final Championship match */
-#championship-match .team {
-    background-color: var(--NavyBlack) !important;
-    border: 2px solid var(--Yellow) !important;
-    box-shadow: 0 0 15px rgba(232, 176, 15, 0.7); /* The "glow" effect */
-    color: white !important;
-}
-
-/* Make the Championship match stand out */
-#championship-match {
-    margin-top: 2rem;
-    width: 250px; /* Give the final match a slightly larger width */
-    transform: scale(1.1);
-}
-/* --- END ARENA STYLES --- */
-
     </style>
 </head>
 <body>
@@ -501,67 +457,32 @@
         
         function initializeBracket() {
             const bracket = document.getElementById('bracket');
-            bracket.innerHTML = ''; // Clear previous content
-
-            // --- Build the Left and Right Halves (Rounds 1-4) ---
+            bracket.innerHTML = '';
             const leftHalf = document.createElement('div');
             leftHalf.className = 'bracket-half left';
-            // Only build the first 4 rounds for the outer wings
-            for (let roundIndex = 0; roundIndex < 4; roundIndex++) {
-                leftHalf.appendChild(createRound(rounds[roundIndex], roundIndex, 0, rounds[roundIndex].matches / 2));
-            }
-
             const rightHalf = document.createElement('div');
             rightHalf.className = 'bracket-half right';
-            for (let roundIndex = 0; roundIndex < 4; roundIndex++) {
-                rightHalf.appendChild(createRound(rounds[roundIndex], roundIndex, rounds[roundIndex].matches / 2, rounds[roundIndex].matches / 2));
+            for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
+                const round = rounds[roundIndex];
+                leftHalf.appendChild(createRound(round, roundIndex, 0, round.matches / 2));
+                rightHalf.appendChild(createRound(round, roundIndex, round.matches / 2, round.matches / 2));
             }
-
-            // --- Build the "Arena" Center Column ---
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
-
-            // Add the Arena Title
-            const arenaTitle = document.createElement('div');
-            arenaTitle.className = 'arena-title';
-            arenaTitle.textContent = 'CHAMPIONSHIP';
-            finalsDiv.appendChild(arenaTitle);
-
-            // Create a container for the Final Four matchups
-            const finalFourContainer = document.createElement('div');
-            finalFourContainer.className = 'final-four-container';
-
-            // Create Final Four Match 1 (winner from left side)
-            const ffMatch1 = createRound(rounds[4], 4, 0, 1); // Round 5, Match 0
-            finalFourContainer.appendChild(ffMatch1);
-
-            // Add your logo
+            const finalsRound = createRound(rounds[5], 5, 0, 1);
             const logo = document.createElement('img');
             logo.src = 'SWSC_logo.png';
             logo.alt = 'Bracket Logo';
             logo.className = 'center-logo';
-            finalFourContainer.appendChild(logo);
-
-            // Create Final Four Match 2 (winner from right side)
-            const ffMatch2 = createRound(rounds[4], 4, 1, 1); // Round 5, Match 1
-            finalFourContainer.appendChild(ffMatch2);
-            
-            finalsDiv.appendChild(finalFourContainer);
-
-            // Create Championship Match
-            const champMatch = createRound(rounds[5], 5, 0, 1); // Round 6, Match 0
-            champMatch.id = 'championship-match';
-            finalsDiv.appendChild(champMatch);
-
-            // --- Assemble the final bracket ---
+            finalsDiv.appendChild(logo);
+            finalsDiv.appendChild(finalsRound);
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
             bracket.appendChild(rightHalf);
-
-            // Attach all the click/hover event listeners
             attachClickHandlers();
             attachHoverHandlers();
         }
+
         function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
             roundDiv.className = `round ${round.class}`;
@@ -592,44 +513,43 @@
                 // *** THIS IS THE CORE FIX ***
                 // Instead of just taking the names, we now check if we need to
                 // populate them from a previous round's winner.
-				// ... (inside the createRound function, within the for loop)
-				
-				// Get the potentially updated team info.
-				let team1 = matchData.teams[0];
-				let team2 = matchData.teams[1];
-				
-				if (roundIndex > 0) {
-				    const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
-				    const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
-				    const prevMatch1 = bracketData[prevMatchId1];
-				    const prevMatch2 = bracketData[prevMatchId2];
-				
-				    if (prevMatch1 && prevMatch1.winner !== null) {
-				        team1 = prevMatch1.teams[prevMatch1.winner];
-				    }
-				    if (prevMatch2 && prevMatch2.winner !== null) {
-				        team2 = prevMatch2.teams[prevMatch2.winner];
-				    }
-				}
-				// Add the 'tbd' class if the team name is 'TBD'
-				const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
-				const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
-				
-				// Build the HTML for the two teams in the match.
-                // (The arenaTeamClass line is now gone)
+// ... (inside the createRound function, within the for loop)
 
-                // Build the HTML for the two teams in the match.
-                matchDiv.innerHTML = `
-                    <div class="match-line">
-                        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0">
-                            <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
-                        </div>
-                        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1">
-                            <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
-                        </div>
-                    </div>
-                `;
-				// ... (the rest of the function continues as before)
+// Get the potentially updated team info.
+let team1 = matchData.teams[0];
+let team2 = matchData.teams[1];
+
+if (roundIndex > 0) {
+    const prevMatchId1 = `r${roundIndex - 1}-m${matchIndex * 2}`;
+    const prevMatchId2 = `r${roundIndex - 1}-m${matchIndex * 2 + 1}`;
+    const prevMatch1 = bracketData[prevMatchId1];
+    const prevMatch2 = bracketData[prevMatchId2];
+
+    if (prevMatch1 && prevMatch1.winner !== null) {
+        team1 = prevMatch1.teams[prevMatch1.winner];
+    }
+    if (prevMatch2 && prevMatch2.winner !== null) {
+        team2 = prevMatch2.teams[prevMatch2.winner];
+    }
+}
+// Add the 'tbd' class if the team name is 'TBD'
+const team1TBDClass = (team1.name || 'TBD') === 'TBD' ? ' tbd' : '';
+const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
+
+// Build the HTML for the two teams in the match.
+matchDiv.innerHTML = `
+    <div class="match-line">
+        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0">
+            <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
+        </div>
+        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1">
+            <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
+        </div>
+    </div>
+`;
+
+// ... (the rest of the function continues as before)
+
                 // Now, check if the CURRENT match has a winner and apply styling.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
