@@ -394,8 +394,8 @@
     width: 100%;
 }
 
-/* Style for a team that has made it into the Arena */
-.arena-team {
+/* NEW: Style ONLY for the teams in the final Championship match */
+#championship-match .team {
     background-color: var(--NavyBlack) !important;
     border: 2px solid var(--Yellow) !important;
     box-shadow: 0 0 15px rgba(232, 176, 15, 0.7); /* The "glow" effect */
@@ -616,24 +616,20 @@
 				const team2TBDClass = (team2.name || 'TBD') === 'TBD' ? ' tbd' : '';
 				
 				// Build the HTML for the two teams in the match.
-                // Add a class if the team is in the "Arena" (rounds 5 and 6)
-                const arenaTeamClass = (roundIndex >= 4) ? ' arena-team' : '';
+                // (The arenaTeamClass line is now gone)
 
                 // Build the HTML for the two teams in the match.
                 matchDiv.innerHTML = `
                     <div class="match-line">
-                        <div class="team${team1TBDClass}${arenaTeamClass}" data-match="${matchId}" data-team="0">
+                        <div class="team${team1TBDClass}" data-match="${matchId}" data-team="0">
                             <span class="seed">${team1.seed || '-'}</span>${team1.name || 'TBD'}
                         </div>
-                        <div class="team${team2TBDClass}${arenaTeamClass}" data-match="${matchId}" data-team="1">
+                        <div class="team${team2TBDClass}" data-match="${matchId}" data-team="1">
                             <span class="seed">${team2.seed || '-'}</span>${team2.name || 'TBD'}
                         </div>
                     </div>
                 `;
-
-				
 				// ... (the rest of the function continues as before)
-
                 // Now, check if the CURRENT match has a winner and apply styling.
                 if (matchData.winner !== null) {
                     const teamsInMatch = matchDiv.querySelectorAll('.team');
