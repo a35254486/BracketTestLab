@@ -487,31 +487,25 @@
 
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
-
             const finalsRound = createRound(rounds[5], 5, 0, 1);
-
-            // Create the top logo
+            // Create and append the logos in the correct order
             const logo = document.createElement('img');
             logo.src = 'SWSC_logo.png';
             logo.alt = 'Bracket Logo';
             logo.className = 'center-logo';
-
+            finalsDiv.appendChild(logo);
             // Create the new bottom logo
             const bottomLogo = document.createElement('img');
             bottomLogo.src = 'DK2.png'; // Direct file name
             bottomLogo.alt = 'DK Logo';
             bottomLogo.className = 'bottom-logo'; // Use the new simple CSS class
-
-            // Add elements to the center column in the desired order
-            finalsDiv.appendChild(logo);
-            finalsDiv.appendChild(finalsRound);
-            finalsDiv.appendChild(bottomLogo); // Add the new logo right after the championship match
-
+            finalsDiv.appendChild(bottomLogo);
 			// Create the new third logo
             const fantail = document.createElement('img');
             fantail.src = 'FanTail.png'; // Direct file name
             fantail.alt = 'FanTail';
             fantail.className = 'fantail'; // Use the new simple CSS class
+            finalsDiv.appendChild(fantail); // Appended immediately after bottomLogo
 
             // Add the three main columns to the bracket
             bracket.appendChild(leftHalf);
