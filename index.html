@@ -512,13 +512,13 @@
         
         function initializeBracket() {
             const bracket = document.getElementById('bracket');
-            bracket.innerHTML = '';
+	            bracket.innerHTML = '';
 
             const leftHalf = document.createElement('div');
-            leftHalf.className = 'bracket-half left';
+    	        leftHalf.className = 'bracket-half left';
 
             const rightHalf = document.createElement('div');
-            rightHalf.className = 'bracket-half right';
+        	    rightHalf.className = 'bracket-half right';
 
             for (let roundIndex = 0; roundIndex < 5; roundIndex++) {
                 const round = rounds[roundIndex];
@@ -527,27 +527,27 @@
             }
 
             const finalsDiv = document.createElement('div');
-            finalsDiv.className = 'finals-column';
-            const finalsRound = createRound(rounds[5], 5, 0, 1);
-			finalsDiv.appendChild(finalsRound);
-			// Create and append the logos in the correct order
+	            finalsDiv.className = 'finals-column';
+				// Create and append the logos in the correct order
             const logo = document.createElement('img');
-            logo.src = 'SWSC_logo.png';
-            logo.alt = 'Bracket Logo';
-            logo.className = 'center-logo';
-            finalsDiv.appendChild(logo);
-            // Create the new bottom logo
-            const bottomLogo = document.createElement('img');
-            bottomLogo.src = 'DK2.png'; // Direct file name
-            bottomLogo.alt = 'DK Logo';
-            bottomLogo.className = 'bottom-logo'; // Use the new simple CSS class
-            finalsDiv.appendChild(bottomLogo);
-			// Create the new third logo
+	            logo.src = 'SWSC_logo.png';
+	            logo.alt = 'Bracket Logo';
+	            logo.className = 'center-logo';
+	            finalsDiv.appendChild(logo);
+	            // Create the new bottom logo
+            const finalsRound = createRound(rounds[5], 5, 0, 1);
+				finalsDiv.appendChild(finalsRound);
+			const bottomLogo = document.createElement('img');
+	            bottomLogo.src = 'DK2.png'; // Direct file name
+	            bottomLogo.alt = 'DK Logo';
+	            bottomLogo.className = 'bottom-logo'; // Use the new simple CSS class
+	            finalsDiv.appendChild(bottomLogo);
+				// Create the new third logo
             const fantail = document.createElement('img');
-            fantail.src = 'FanTail.png'; // Direct file name
-            fantail.alt = 'FanTail';
-            fantail.className = 'fantail'; // Use the new simple CSS class
-            finalsDiv.appendChild(fantail); // Appended immediately after bottomLogo
+	            fantail.src = 'FanTail.png'; // Direct file name
+	            fantail.alt = 'FanTail';
+	            fantail.className = 'fantail'; // Use the new simple CSS class
+	            finalsDiv.appendChild(fantail); // Appended immediately after bottomLogo
 
             // Add the three main columns to the bracket
             bracket.appendChild(leftHalf);
@@ -560,23 +560,22 @@
 
 	function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
-            roundDiv.className = `round ${round.class}`;
+      	      roundDiv.className = `round ${round.class}`;
 
             const header = document.createElement('div');
-            header.className = 'round-header';
-            header.textContent = round.name;
-            roundDiv.appendChild(header);
-
+  	  	        header.className = 'round-header';
+	            header.textContent = round.name;
+  	  	        roundDiv.appendChild(header);
             const matchesDiv = document.createElement('div');
-            matchesDiv.className = 'round-matches';
+            	matchesDiv.className = 'round-matches';
 
             for (let i = 0; i < matchCount; i++) {
                 const matchIndex = startMatch + i;
                 const matchId = `r${roundIndex}-m${matchIndex}`;
                 
                 const matchDiv = document.createElement('div');
-                matchDiv.className = 'match';
-                matchDiv.dataset.matchId = matchId;
+	                matchDiv.className = 'match';
+	                matchDiv.dataset.matchId = matchId;
 
                 // Get the specific match data from the pre-loaded bracketData
                 const matchData = bracketData[matchId];
