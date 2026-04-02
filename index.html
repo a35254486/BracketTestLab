@@ -535,14 +535,14 @@
 	            logo.className = 'center-logo';
 	            finalsDiv.appendChild(logo);
 	            // Create the new bottom logo
-            const finalsRound = createRound(rounds[5], 5, 0, 1);
-				finalsDiv.appendChild(finalsRound);
 			const bottomLogo = document.createElement('img');
 	            bottomLogo.src = 'DK2.png'; // Direct file name
 	            bottomLogo.alt = 'DK Logo';
 	            bottomLogo.className = 'bottom-logo'; // Use the new simple CSS class
 	            finalsDiv.appendChild(bottomLogo);
-				// Create the new third logo
+            const finalsRound = createRound(rounds[5], 5, 0, 1);
+				finalsDiv.appendChild(finalsRound);
+			// Create the new third logo
             const fantail = document.createElement('img');
 	            fantail.src = 'FanTail.png'; // Direct file name
 	            fantail.alt = 'FanTail';
