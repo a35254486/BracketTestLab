@@ -130,38 +130,6 @@
             gap: 60px;
             min-width: auto;
         }
-		/* --- START: Spotlight Effect for Final Four --- */
-		.bracket {
-		    position: relative; /* Required for positioning the spotlight */
-		    z-index: 1; /* Ensures bracket content is on top of the spotlight */
-		}
-			.bracket::before {
-		    content: '';
-		    position: absolute;
-		    /* Center the spotlight. Adjust top/left percentages if needed. */
-		    top: 50%;
-		    left: 50%;
-		    transform: translate(-50%, -50%);
-		    
-		    /* Define the size of the spotlight */
-		    width: 750px; 
-		    height: 900px;
-		    
-		    /* The "Stage Light": A soft, barely perceptible yellow radial gradient */
-		    background: radial-gradient(
-		        ellipse at center,
-		        rgba(232, 176, 15, 0.25) 0%,  /* Soft yellow, slightly more opaque in the center */
-		        rgba(232, 176, 15, 0.2) 30%, /* Fading out */
-		        rgba(232, 176, 15, 0) 70%   /* Fully transparent at the edges */
-		    );
-		    
-		    border-radius: 50%; /* Makes the gradient circular/elliptical */
-		    
-		    /* Place the spotlight behind the bracket content */
-		    z-index: -1; 
-		}
-		/* --- END: Spotlight Effect --- */
-
         .bracket-half {
             display: flex;
             gap: 60px;
@@ -355,6 +323,47 @@
         .round6 .match::before {
             display: none;
         }
+		/* --- START: Enhanced Final Four & Championship Styles --- */
+		
+		/* Style the "FINAL 4" team boxes */
+		.round5 .team {
+		    min-width: 250px; /* Make them wider */
+		    padding: 10px 15px; /* Increase padding */
+		    font-size: 1.5rem;  /* Make the font larger */
+		    font-weight: 600;   /* Make text bolder */
+		}
+		
+		/* Style the "CHAMPIONSHIP" team boxes */
+		.round6 .team {
+		    min-width: 300px;         /* Even wider */
+		    padding: 20px;            /* Generous padding */
+		    font-size: 2rem;          /* Much larger font */
+		    font-weight: 700;         /* Boldest text */
+		    text-align: center;       /* Center the team name */
+		    border-width: 3px;        /* Thicker border */
+		    border-radius: 6px;       /* Slightly more rounded corners */
+		}
+		
+		/* Ensure the hover effect still looks good on the larger championship boxes */
+		.round6 .team:hover {
+		    border-color: var(--Yellow);
+		    background: #FFFEF5;
+		}
+		
+		/* Make the Championship winner state more prominent */
+		.round6 .team.winner {
+		    background: var(--NavyBlack);
+		    border-color: var(--Yellow); /* Use yellow border for the champ */
+		    box-shadow: 0 0 25px rgba(232, 176, 15, 0.5); /* Add a yellow glow */
+		}
+		
+		/* Remove connecting lines for the final rounds as they don't lead anywhere */
+		.round5 .match::after, .round5 .match::before,
+		.round6 .match::after, .round6 .match::before {
+		    display: none;
+		}
+		
+		/* --- END: Enhanced Final Round Styles --- */
 
         /* === FINAL, WORKING CHAMPION MODAL === */
         .champion-overlay {
@@ -520,7 +529,7 @@
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
             const finalsRound = createRound(rounds[5], 5, 0, 1);
-            // Create and append the logos in the correct order
+			// Create and append the logos in the correct order
             const logo = document.createElement('img');
             logo.src = 'SWSC_logo.png';
             logo.alt = 'Bracket Logo';
