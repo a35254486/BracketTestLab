@@ -525,7 +525,7 @@
                 leftHalf.appendChild(createRound(round, roundIndex, 0, round.matches / 2));
                 rightHalf.appendChild(createRound(round, roundIndex, round.matches / 2, round.matches / 2));
             }
-/*            const finalsDiv = document.createElement('div');
+            const finalsDiv = document.createElement('div');
 	            finalsDiv.className = 'finals-column';
 				// Create and append the logos in the correct order
             const logo = document.createElement('img');
@@ -547,7 +547,6 @@
 	            fantail.alt = 'FanTail';
 	            fantail.className = 'fantail'; // Use the new simple CSS class
 	            finalsDiv.appendChild(fantail); // Appended immediately after bottomLogo
-*/
             // Add the three main columns to the bracket
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
@@ -556,7 +555,6 @@
             attachClickHandlers();
             attachHoverHandlers();
         }
-
 	function createRound(round, roundIndex, startMatch, matchCount) {
             const roundDiv = document.createElement('div');
       	      roundDiv.className = `round ${round.class}`;
