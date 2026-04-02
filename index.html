@@ -529,6 +529,7 @@
             const finalsDiv = document.createElement('div');
             finalsDiv.className = 'finals-column';
             const finalsRound = createRound(rounds[5], 5, 0, 1);
+			finalsDiv.appendChild(finalsRound);
 			// Create and append the logos in the correct order
             const logo = document.createElement('img');
             logo.src = 'SWSC_logo.png';
