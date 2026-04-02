@@ -130,6 +130,38 @@
             gap: 60px;
             min-width: auto;
         }
+		/* --- START: Spotlight Effect for Final Four --- */
+		.bracket {
+		    position: relative; /* Required for positioning the spotlight */
+		    z-index: 1; /* Ensures bracket content is on top of the spotlight */
+		}
+			.bracket::before {
+		    content: '';
+		    position: absolute;
+		    /* Center the spotlight. Adjust top/left percentages if needed. */
+		    top: 50%;
+		    left: 50%;
+		    transform: translate(-50%, -50%);
+		    
+		    /* Define the size of the spotlight */
+		    width: 750px; 
+		    height: 900px;
+		    
+		    /* The "Stage Light": A soft, barely perceptible yellow radial gradient */
+		    background: radial-gradient(
+		        ellipse at center,
+		        rgba(232, 176, 15, 0.25) 0%,  /* Soft yellow, slightly more opaque in the center */
+		        rgba(232, 176, 15, 0.2) 30%, /* Fading out */
+		        rgba(232, 176, 15, 0) 70%   /* Fully transparent at the edges */
+		    );
+		    
+		    border-radius: 50%; /* Makes the gradient circular/elliptical */
+		    
+		    /* Place the spotlight behind the bracket content */
+		    z-index: -1; 
+		}
+		/* --- END: Spotlight Effect --- */
+
         .bracket-half {
             display: flex;
             gap: 60px;
