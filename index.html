@@ -143,9 +143,9 @@
         .finals-column {
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;/*flex-start*/
             align-items: center;
-            padding-top: 5rem; 
+            padding: 0; /*padding-top*/ /*5rem*/
         }
         .round {
             display: flex;
@@ -534,19 +534,19 @@
 	            logo.className = 'center-logo';
 	            finalsDiv.appendChild(logo);
 	            // Create the new bottom logo
-			const bottomLogo = document.createElement('img');
+/*			const bottomLogo = document.createElement('img');
 	            bottomLogo.src = 'DK2.png'; // Direct file name
 	            bottomLogo.alt = 'DK Logo';
 	            bottomLogo.className = 'bottom-logo'; // Use the new simple CSS class
 	            finalsDiv.appendChild(bottomLogo);
-            const finalsRound = createRound(rounds[5], 5, 0, 1);
+			const finalsRound = createRound(rounds[5], 5, 0, 1);
 				finalsDiv.appendChild(finalsRound);
 			// Create the new third logo
             const fantail = document.createElement('img');
 	            fantail.src = 'FanTail.png'; // Direct file name
 	            fantail.alt = 'FanTail';
 	            fantail.className = 'fantail'; // Use the new simple CSS class
-	            finalsDiv.appendChild(fantail); // Appended immediately after bottomLogo
+	            finalsDiv.appendChild(fantail); // Appended immediately after bottomLogo */
             // Add the three main columns to the bracket
             bracket.appendChild(leftHalf);
             bracket.appendChild(finalsDiv);
