@@ -870,12 +870,12 @@
   "r5-m0": {
     "teams": [
       {
+        "name": "LT Blake Fontaine",
+        "seed": 7
+      },      
+      {
         "name": "LT Geoff Welch",
         "seed": 4
-      },
-      {
-        "name": "LT Bingo Bongo",
-        "seed": 7
       }
     ],
     "winner": 1,
