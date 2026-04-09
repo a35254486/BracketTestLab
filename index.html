@@ -687,6 +687,14 @@ function selectWinner(matchId, teamIndex) {
             if (idx === teamIndex) t.classList.add('winner');
             else t.classList.add('loser');
         });
+        // AUTO PUT WINNER ON TOP OF CHAMPIONSHIP MATCHUP
+        if (matchId === 'r5-m0' && teamIndex === 1) {
+            // ...find the parent and swap the team elements.
+            const winnerDiv = matchDiv.querySelector('[data-team="1"]');
+            const loserDiv = matchDiv.querySelector('[data-team="0"]');
+            winnerDiv.parentNode.insertBefore(winnerDiv, loserDiv);
+        }
+        // --- END OF NEW BLOCK ---
         advanceWinner(matchId, selectedTeam);
     }
 }
